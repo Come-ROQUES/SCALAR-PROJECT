@@ -11,7 +11,8 @@ import json
 import time
 from typing import Any, Dict, List, Optional, Tuple
 from functools import wraps
-from datetime import datetime, timedelta
+from datetime import datetime, date, timedelta
+from io import StringIO
 
 
 class CacheManager:
@@ -68,9 +69,10 @@ def serialize_deals_for_cache(deals: List) -> str:
             'd_or_l': deal.d_or_l.value if hasattr(deal.d_or_l, 'value') else str(deal.d_or_l),
             'pair_currency': deal.pair_currency,
             'amount': float(deal.amount),
-            'trade_date': deal.trade_date.isoformat(),
-            'value_date': deal.value_date.isoformat(),
-            'maturity_date': deal.maturity_date.isoformat(),
+            # FIX: Sérialiser seulement la date (pas l'heure) pour éviter les problèmes de format
+            'trade_date': deal.trade_date.strftime('%Y-%m-%d') if hasattr(deal.trade_date, 'strftime') else str(deal.trade_date),
+            'value_date': deal.value_date.strftime('%Y-%m-%d') if hasattr(deal.value_date, 'strftime') else str(deal.value_date),
+            'maturity_date': deal.maturity_date.strftime('%Y-%m-%d') if hasattr(deal.maturity_date, 'strftime') else str(deal.maturity_date),
             'client_rate': float(deal.client_rate),
             'ois_equivalent_rate': float(deal.ois_equivalent_rate),
             'trader_id': deal.trader_id
@@ -78,6 +80,47 @@ def serialize_deals_for_cache(deals: List) -> str:
         deals_data.append(deal_dict)
     
     return json.dumps(deals_data, sort_keys=True)
+
+
+def _parse_date_flexible(date_str: str) -> date:
+    """Parse une date avec gestion de différents formats"""
+    if isinstance(date_str, date):
+        return date_str
+    
+    # Nettoyer la string
+    date_str = str(date_str).strip()
+    
+    # Formats à essayer
+    formats_to_try = [
+        '%Y-%m-%d',                    # 2025-08-01
+        '%Y-%m-%dT%H:%M:%S',          # 2025-08-01T00:00:00  
+        '%Y-%m-%d %H:%M:%S',          # 2025-08-01 00:00:00
+    ]
+    
+    for fmt in formats_to_try:
+        try:
+            dt = datetime.strptime(date_str, fmt)
+            return dt.date()  # Retourner seulement la date
+        except ValueError:
+            continue
+    
+    # Essayer fromisoformat avec nettoyage
+    try:
+        # Supprimer l'heure si présente
+        if 'T' in date_str:
+            date_str = date_str.split('T')[0]
+        return date.fromisoformat(date_str)
+    except ValueError:
+        # Dernier essai: parsing manuel basique
+        try:
+            parts = date_str.split('-')
+            if len(parts) >= 3:
+                year, month, day = int(parts[0]), int(parts[1]), int(parts[2])
+                return date(year, month, day)
+        except:
+            pass
+    
+    raise ValueError(f"Cannot parse date: {date_str}")
 
 
 @st.cache_data(ttl=3600, show_spinner=True)
@@ -89,7 +132,6 @@ def compute_enhanced_pnl_vectorized_cached(deals_json: str, config_json: str) ->
     # Import local pour éviter import circulaire
     from treasury.pnl import compute_enhanced_pnl_vectorized
     from treasury.models import GenericDeal, ProductType, DepositLoan
-    from datetime import date
     
     # Désérialiser les données
     deals_data = json.loads(deals_json)
@@ -110,10 +152,10 @@ def compute_enhanced_pnl_vectorized_cached(deals_json: str, config_json: str) ->
             else:
                 d_or_l = deal_data['d_or_l']
             
-            # Reconstruire les dates
-            trade_date = date.fromisoformat(deal_data['trade_date'])
-            value_date = date.fromisoformat(deal_data['value_date']) 
-            maturity_date = date.fromisoformat(deal_data['maturity_date'])
+            # FIX: Utiliser la fonction de parsing flexible
+            trade_date = _parse_date_flexible(deal_data['trade_date'])
+            value_date = _parse_date_flexible(deal_data['value_date'])
+            maturity_date = _parse_date_flexible(deal_data['maturity_date'])
             
             deal = GenericDeal(
                 comment=deal_data['comment'],
@@ -134,6 +176,11 @@ def compute_enhanced_pnl_vectorized_cached(deals_json: str, config_json: str) ->
             print(f"Erreur reconstruction deal {deal_data.get('deal_id', 'UNKNOWN')}: {e}")
             continue
     
+    # Vérifier qu'on a des deals valides
+    if not deals:
+        print("WARNING: Aucun deal valide après reconstruction depuis cache")
+        return pd.DataFrame().to_json(orient='records')
+    
     # Appeler la fonction originale
     df_pnl = compute_enhanced_pnl_vectorized(deals, config)
     
@@ -148,6 +195,11 @@ def compute_pnl_with_cache(deals: List, config: Dict[str, Any]) -> pd.DataFrame:
     """
     start_time = time.time()
     
+    # Vérification préalable
+    if not deals:
+        print("WARNING: Aucun deal fourni pour calcul PnL")
+        return pd.DataFrame()
+    
     try:
         # Sérialiser pour cache
         deals_json = serialize_deals_for_cache(deals)
@@ -156,8 +208,12 @@ def compute_pnl_with_cache(deals: List, config: Dict[str, Any]) -> pd.DataFrame:
         # Utiliser version cachée
         result_json = compute_enhanced_pnl_vectorized_cached(deals_json, config_json)
         
-        # Désérialiser résultat
-        df_pnl = pd.read_json(result_json, orient='records')
+        # FIX: Éviter le warning pandas en utilisant StringIO
+        if result_json.strip() == '[]' or not result_json.strip():
+            # JSON vide ou invalide
+            raise ValueError("Résultat cache vide")
+        
+        df_pnl = pd.read_json(StringIO(result_json), orient='records')
         
         # Convertir les colonnes de dates si nécessaire
         date_columns = ['trade_date', 'value_date', 'maturity_date']
@@ -176,6 +232,7 @@ def compute_pnl_with_cache(deals: List, config: Dict[str, Any]) -> pd.DataFrame:
         
     except Exception as e:
         # Fallback vers fonction originale - Import local
+        print(f"Cache failed, using direct calculation: {e}")
         from treasury.pnl import compute_enhanced_pnl_vectorized
         
         cache_manager.cache_stats['misses'] += 1
@@ -183,7 +240,7 @@ def compute_pnl_with_cache(deals: List, config: Dict[str, Any]) -> pd.DataFrame:
         execution_time = time.time() - start_time
         
         if st.session_state.get('debug_mode', False):
-            st.sidebar.warning(f"🐌 PnL calculé en {execution_time:.2f}s (sans cache)")
+            st.sidebar.warning(f"🐌 PnL calculé en {execution_time:.2f}s (sans cache: {str(e)[:50]})")
         
         return df_pnl
 
@@ -218,7 +275,6 @@ def test_cache_performance():
     """Teste les performances du cache"""
     # Import local pour éviter circularité
     from treasury.models import GenericDeal, ProductType, DepositLoan
-    from datetime import date
     
     # Créer deal de test
     test_deal = GenericDeal(
