@@ -14,7 +14,7 @@ Application web moderne pour l'analyse de PnL, gestion des risques et monitoring
 
 ---
 
-## 🏗Architecture Technique Complète
+## Architecture Technique Complète
 
 ### Structure des Dossiers Finale
 ```
