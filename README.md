@@ -73,10 +73,6 @@ cd src && streamlit run ui/app.py
 # Alternative avec PYTHONPATH
 export PYTHONPATH=$PWD/src && streamlit run src/ui/app.py
 
-# Vérification : depuis SCALAR-PROJECT/
-pwd  # doit être: /Users/comeroques/Projects/IDOITFORFUN/SCALAR-PROJECT
-```
-
 ---
 
 ## NOUVEAUTÉ V2.1 : Système de Cache Intelligent
