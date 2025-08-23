@@ -40,25 +40,51 @@ def calculate_accrued_pnl(deal: GenericDeal,
     Returns:
         float: PnL accrued en devise de base
     """
-    if deal.value_date > val_date:
-        return 0.0  # Deal pas encore commencé
-    
-    # Période d'accrual en années
-    years_accrued = get_years_between(deal.value_date, val_date)
-    
-    # Différentiel de taux client vs OIS
-    rate_diff = deal.client_rate - deal.ois_equivalent_rate
-    
-    # Signe : positif pour Loan, négatif pour Deposit
-    sign = 1.0 if deal.d_or_l == "L" else -1.0
-    
-    # Calcul accrued simple : différentiel × notionnel × temps
-    accrued_pnl = sign * rate_diff * deal.amount * years_accrued
-    
-    logger.debug(f"Accrued {deal.deal_id}: {rate_diff:.4f} × {deal.amount:,.0f} "
-                f"× {years_accrued:.3f} = {accrued_pnl:,.0f}")
-    
-    return accrued_pnl
+    try:
+        # Validations de base
+        if not hasattr(deal, 'value_date') or not deal.value_date:
+            logger.warning(f"Value date manquante pour deal {deal.deal_id}")
+            return 0.0
+            
+        if deal.value_date > val_date:
+            return 0.0  # Deal pas encore commencé
+        
+        # Validation des taux
+        if not isinstance(deal.client_rate, (int, float)) or np.isnan(deal.client_rate):
+            logger.warning(f"Client rate invalide pour deal {deal.deal_id}")
+            return 0.0
+            
+        if not isinstance(deal.ois_equivalent_rate, (int, float)) or np.isnan(deal.ois_equivalent_rate):
+            logger.warning(f"OIS equivalent rate invalide pour deal {deal.deal_id}")
+            return 0.0
+        
+        # Période d'accrual en années
+        years_accrued = get_years_between(deal.value_date, val_date)
+        if years_accrued <= 0:
+            return 0.0
+        
+        # Différentiel de taux client vs OIS
+        rate_diff = deal.client_rate - deal.ois_equivalent_rate
+        
+        # Signe : positif pour Loan, négatif pour Deposit
+        sign = 1.0 if deal.d_or_l == "L" else -1.0
+        
+        # Calcul accrued simple : différentiel × notionnel × temps
+        accrued_pnl = sign * rate_diff * deal.amount * years_accrued
+        
+        # Validation résultat
+        if not isinstance(accrued_pnl, (int, float)) or np.isnan(accrued_pnl):
+            logger.warning(f"Accrued PnL invalide pour deal {deal.deal_id}")
+            return 0.0
+        
+        logger.debug(f"Accrued {deal.deal_id}: {rate_diff:.4f} × {deal.amount:,.0f} "
+                    f"× {years_accrued:.3f} = {accrued_pnl:,.0f}")
+        
+        return accrued_pnl
+        
+    except Exception as e:
+        logger.error(f"Erreur calcul accrued PnL pour deal {getattr(deal, 'deal_id', 'UNKNOWN')}: {e}")
+        return 0.0
 
 
 def calculate_mtm_pnl(deal: GenericDeal, 
@@ -75,28 +101,49 @@ def calculate_mtm_pnl(deal: GenericDeal,
     Returns:
         float: PnL MTM en devise de base
     """
-    if deal.maturity_date <= val_date:
-        return 0.0  # Deal expiré
-    
-    # Temps jusqu'à maturité
-    time_to_maturity = get_years_between(val_date, deal.maturity_date)
-    
-    # Duration approximative (à remplacer par calcul précis)
-    duration_approx = time_to_maturity * 0.8
-    
-    # Mouvement de taux depuis le trade
-    rate_change = ois_rate_now - deal.ois_equivalent_rate
-    
-    # Signe : opposé pour MTM (si taux monte, valeur baisse)
-    sign = 1.0 if deal.d_or_l == "L" else -1.0
-    
-    # MTM = -signe × mouvement_taux × notionnel × duration
-    mtm_pnl = -sign * rate_change * deal.amount * duration_approx
-    
-    logger.debug(f"MTM {deal.deal_id}: -{sign} × {rate_change:.4f} × {deal.amount:,.0f} "
-                f"× {duration_approx:.3f} = {mtm_pnl:,.0f}")
-    
-    return mtm_pnl
+    try:
+        if deal.maturity_date <= val_date:
+            return 0.0  # Deal expiré
+        
+        # Validation des taux
+        if not isinstance(ois_rate_now, (int, float)) or np.isnan(ois_rate_now):
+            logger.warning(f"OIS rate now invalide pour deal {deal.deal_id}")
+            return 0.0
+            
+        if not isinstance(deal.ois_equivalent_rate, (int, float)) or np.isnan(deal.ois_equivalent_rate):
+            logger.warning(f"OIS equivalent rate invalide pour deal {deal.deal_id}")
+            return 0.0
+        
+        # Temps jusqu'à maturité
+        time_to_maturity = get_years_between(val_date, deal.maturity_date)
+        if time_to_maturity <= 0:
+            return 0.0
+        
+        # Duration approximative (à remplacer par calcul précis)
+        duration_approx = time_to_maturity * 0.8
+        
+        # Mouvement de taux depuis le trade
+        rate_change = ois_rate_now - deal.ois_equivalent_rate
+        
+        # Signe : opposé pour MTM (si taux monte, valeur baisse)
+        sign = 1.0 if deal.d_or_l == "L" else -1.0
+        
+        # MTM = -signe × mouvement_taux × notionnel × duration
+        mtm_pnl = -sign * rate_change * deal.amount * duration_approx
+        
+        # Validation résultat
+        if not isinstance(mtm_pnl, (int, float)) or np.isnan(mtm_pnl):
+            logger.warning(f"MTM PnL invalide pour deal {deal.deal_id}")
+            return 0.0
+        
+        logger.debug(f"MTM {deal.deal_id}: -{sign} × {rate_change:.4f} × {deal.amount:,.0f} "
+                    f"× {duration_approx:.3f} = {mtm_pnl:,.0f}")
+        
+        return mtm_pnl
+        
+    except Exception as e:
+        logger.error(f"Erreur calcul MTM PnL pour deal {getattr(deal, 'deal_id', 'UNKNOWN')}: {e}")
+        return 0.0
 
 
 def calculate_rate_pnl(deal: GenericDeal, 
@@ -113,24 +160,46 @@ def calculate_rate_pnl(deal: GenericDeal,
     Returns:
         float: PnL rate en devise de base
     """
-    if deal.maturity_date <= val_date:
+    try:
+        if deal.maturity_date <= val_date:
+            return 0.0
+        
+        # Validation des taux
+        if not isinstance(ois_rate_now, (int, float)) or np.isnan(ois_rate_now):
+            logger.warning(f"OIS rate now invalide pour deal {deal.deal_id}")
+            return 0.0
+            
+        if not isinstance(deal.ois_equivalent_rate, (int, float)) or np.isnan(deal.ois_equivalent_rate):
+            logger.warning(f"OIS equivalent rate invalide pour deal {deal.deal_id}")
+            return 0.0
+        
+        # Shift de la courbe
+        curve_shift = ois_rate_now - deal.ois_equivalent_rate
+        time_to_maturity = get_years_between(val_date, deal.maturity_date)
+        
+        if time_to_maturity <= 0:
+            return 0.0
+        
+        # Sensibilité aux taux (à calibrer selon votre modèle)
+        rate_sensitivity = 0.5
+        sign = 1.0 if deal.d_or_l == "L" else -1.0
+        
+        # Rate PnL = signe × shift × notionnel × maturité × sensibilité
+        rate_pnl = sign * curve_shift * deal.amount * time_to_maturity * rate_sensitivity
+        
+        # Validation résultat
+        if not isinstance(rate_pnl, (int, float)) or np.isnan(rate_pnl):
+            logger.warning(f"Rate PnL invalide pour deal {deal.deal_id}")
+            return 0.0
+        
+        logger.debug(f"Rate {deal.deal_id}: {sign} × {curve_shift:.4f} × {deal.amount:,.0f} "
+                    f"× {time_to_maturity:.3f} × {rate_sensitivity} = {rate_pnl:,.0f}")
+        
+        return rate_pnl
+        
+    except Exception as e:
+        logger.error(f"Erreur calcul rate PnL pour deal {getattr(deal, 'deal_id', 'UNKNOWN')}: {e}")
         return 0.0
-    
-    # Shift de la courbe
-    curve_shift = ois_rate_now - deal.ois_equivalent_rate
-    time_to_maturity = get_years_between(val_date, deal.maturity_date)
-    
-    # Sensibilité aux taux (à calibrer selon votre modèle)
-    rate_sensitivity = 0.5
-    sign = 1.0 if deal.d_or_l == "L" else -1.0
-    
-    # Rate PnL = signe × shift × notionnel × maturité × sensibilité
-    rate_pnl = sign * curve_shift * deal.amount * time_to_maturity * rate_sensitivity
-    
-    logger.debug(f"Rate {deal.deal_id}: {sign} × {curve_shift:.4f} × {deal.amount:,.0f} "
-                f"× {time_to_maturity:.3f} × {rate_sensitivity} = {rate_pnl:,.0f}")
-    
-    return rate_pnl
 
 
 def calculate_liquidity_pnl(deal: GenericDeal, 
@@ -147,24 +216,44 @@ def calculate_liquidity_pnl(deal: GenericDeal,
     Returns:
         float: PnL liquidité en devise de base
     """
-    if deal.maturity_date <= val_date:
+    try:
+        if deal.maturity_date <= val_date:
+            return 0.0
+        
+        # Validation du montant
+        if not isinstance(deal.amount, (int, float)) or deal.amount <= 0:
+            logger.warning(f"Montant invalide pour deal {deal.deal_id}")
+            return 0.0
+        
+        # Facteurs de liquidité (à calibrer selon votre modèle)
+        size_factor = min(deal.amount / 100_000_000, 1.0)  # 0-1 selon taille
+        time_to_maturity = get_years_between(val_date, deal.maturity_date)
+        
+        if time_to_maturity <= 0:
+            return 0.0
+            
+        maturity_factor = min(time_to_maturity, 1.0)
+        
+        # Spread de liquidité (max 10bp)
+        liquidity_spread = size_factor * maturity_factor * 0.001
+        
+        # Coût de liquidité (négatif pour les deux sens)
+        sign = 1.0 if deal.d_or_l == "L" else -1.0
+        liq_pnl = -sign * liquidity_spread * deal.amount
+        
+        # Validation résultat
+        if not isinstance(liq_pnl, (int, float)) or np.isnan(liq_pnl):
+            logger.warning(f"Liquidity PnL invalide pour deal {deal.deal_id}")
+            return 0.0
+        
+        logger.debug(f"Liquidity {deal.deal_id}: -{sign} × {liquidity_spread:.4f} "
+                    f"× {deal.amount:,.0f} = {liq_pnl:,.0f}")
+        
+        return liq_pnl
+        
+    except Exception as e:
+        logger.error(f"Erreur calcul liquidity PnL pour deal {getattr(deal, 'deal_id', 'UNKNOWN')}: {e}")
         return 0.0
-    
-    # Facteurs de liquidité (à calibrer selon votre modèle)
-    size_factor = min(deal.amount / 100_000_000, 1.0)  # 0-1 selon taille
-    maturity_factor = min(get_years_between(val_date, deal.maturity_date), 1.0)
-    
-    # Spread de liquidité (max 10bp)
-    liquidity_spread = size_factor * maturity_factor * 0.001
-    
-    # Coût de liquidité (négatif pour les deux sens)
-    sign = 1.0 if deal.d_or_l == "L" else -1.0
-    liq_pnl = -sign * liquidity_spread * deal.amount
-    
-    logger.debug(f"Liquidity {deal.deal_id}: -{sign} × {liquidity_spread:.4f} "
-                f"× {deal.amount:,.0f} = {liq_pnl:,.0f}")
-    
-    return liq_pnl
 
 
 def calculate_deal_pnl(deal: GenericDeal, 
@@ -184,36 +273,106 @@ def calculate_deal_pnl(deal: GenericDeal,
         DealPnL: Résultat détaillé du calcul
     """
     try:
+        # Validations préliminaires
+        if not hasattr(deal, 'deal_id') or not deal.deal_id:
+            raise ValueError("Deal ID manquant")
+        
+        if not hasattr(deal, 'pair_currency') or not deal.pair_currency:
+            raise ValueError("Devise manquante")
+            
+        if not hasattr(deal, 'amount') or deal.amount <= 0:
+            raise ValueError("Montant invalide")
+            
+        if not hasattr(deal, 'maturity_date') or not deal.maturity_date:
+            raise ValueError("Date de maturité manquante")
+        
         # Extraction devise de base
         if '/' in deal.pair_currency:
             base_ccy = deal.pair_currency.split('/')[0]
         else:
             base_ccy = deal.pair_currency
         
+        # Validation des dates
+        if deal.maturity_date <= val_date:
+            logger.debug(f"Deal {deal.deal_id} expiré, PnL = 0")
+            return DealPnL(
+                deal_id=deal.deal_id,
+                accrued_pnl=0.0,
+                mtm_pnl=0.0,
+                rate_pnl=0.0,
+                liquidity_pnl=0.0,
+                total_pnl=0.0,
+                ois_rate_used=0.0,
+                calculation_timestamp=datetime.now()
+            )
+        
         # Calcul maturité résiduelle
         time_to_maturity = get_years_between(val_date, deal.maturity_date)
         
-        # Taux OIS actuel
-        if config.ois_rate_override is not None:
-            ois_rate_now = config.ois_rate_override
-        else:
-            ois_rate_now = get_ois_rate_now(base_ccy, time_to_maturity, market_data)
+        # Taux OIS actuel avec gestion d'erreur
+        try:
+            if config.ois_rate_override is not None:
+                ois_rate_now = float(config.ois_rate_override)
+            else:
+                ois_rate_now = get_ois_rate_now(base_ccy, time_to_maturity, market_data)
+            
+            # Validation du taux OIS
+            if not isinstance(ois_rate_now, (int, float)) or np.isnan(ois_rate_now):
+                logger.warning(f"Taux OIS invalide pour {deal.deal_id}, utilisation de 0.02")
+                ois_rate_now = 0.02  # Fallback rate
+                
+        except Exception as rate_error:
+            logger.warning(f"Erreur récupération taux OIS pour {deal.deal_id}: {rate_error}, utilisation de 0.02")
+            ois_rate_now = 0.02  # Fallback rate
         
-        # Calculs PnL modulaires selon configuration
-        accrued_pnl = (calculate_accrued_pnl(deal, ois_rate_now, val_date) 
-                      if config.calculate_accrued else 0.0)
+        # Calculs PnL modulaires avec gestion d'erreur robuste
+        accrued_pnl = 0.0
+        if config.calculate_accrued:
+            try:
+                accrued_pnl = calculate_accrued_pnl(deal, ois_rate_now, val_date)
+                if not isinstance(accrued_pnl, (int, float)) or np.isnan(accrued_pnl):
+                    accrued_pnl = 0.0
+            except Exception as e:
+                logger.warning(f"Erreur calcul accrued PnL pour {deal.deal_id}: {e}")
+                accrued_pnl = 0.0
         
-        mtm_pnl = (calculate_mtm_pnl(deal, ois_rate_now, val_date) 
-                  if config.calculate_mtm else 0.0)
+        mtm_pnl = 0.0
+        if config.calculate_mtm:
+            try:
+                mtm_pnl = calculate_mtm_pnl(deal, ois_rate_now, val_date)
+                if not isinstance(mtm_pnl, (int, float)) or np.isnan(mtm_pnl):
+                    mtm_pnl = 0.0
+            except Exception as e:
+                logger.warning(f"Erreur calcul MTM PnL pour {deal.deal_id}: {e}")
+                mtm_pnl = 0.0
         
-        rate_pnl = (calculate_rate_pnl(deal, ois_rate_now, val_date) 
-                   if config.calculate_rate else 0.0)
+        rate_pnl = 0.0
+        if config.calculate_rate:
+            try:
+                rate_pnl = calculate_rate_pnl(deal, ois_rate_now, val_date)
+                if not isinstance(rate_pnl, (int, float)) or np.isnan(rate_pnl):
+                    rate_pnl = 0.0
+            except Exception as e:
+                logger.warning(f"Erreur calcul rate PnL pour {deal.deal_id}: {e}")
+                rate_pnl = 0.0
         
-        liquidity_pnl = (calculate_liquidity_pnl(deal, ois_rate_now, val_date) 
-                        if config.calculate_liquidity else 0.0)
+        liquidity_pnl = 0.0
+        if config.calculate_liquidity:
+            try:
+                liquidity_pnl = calculate_liquidity_pnl(deal, ois_rate_now, val_date)
+                if not isinstance(liquidity_pnl, (int, float)) or np.isnan(liquidity_pnl):
+                    liquidity_pnl = 0.0
+            except Exception as e:
+                logger.warning(f"Erreur calcul liquidity PnL pour {deal.deal_id}: {e}")
+                liquidity_pnl = 0.0
         
         # Total PnL
         total_pnl = accrued_pnl + mtm_pnl + rate_pnl + liquidity_pnl
+        
+        # Validation finale
+        if not isinstance(total_pnl, (int, float)) or np.isnan(total_pnl):
+            logger.warning(f"Total PnL invalide pour {deal.deal_id}, remise à zéro")
+            total_pnl = 0.0
         
         return DealPnL(
             deal_id=deal.deal_id,
@@ -227,16 +386,16 @@ def calculate_deal_pnl(deal: GenericDeal,
         )
         
     except Exception as e:
-        logger.error(f"Erreur calcul PnL deal {deal.deal_id}: {e}")
-        # Retour avec NaN en cas d'erreur
+        logger.error(f"Erreur critique calcul PnL deal {getattr(deal, 'deal_id', 'UNKNOWN')}: {e}")
+        # Retour avec zéros au lieu de NaN pour éviter les erreurs downstream
         return DealPnL(
-            deal_id=deal.deal_id,
-            accrued_pnl=np.nan,
-            mtm_pnl=np.nan,
-            rate_pnl=np.nan,
-            liquidity_pnl=np.nan,
-            total_pnl=np.nan,
-            ois_rate_used=np.nan,
+            deal_id=getattr(deal, 'deal_id', 'ERROR'),
+            accrued_pnl=0.0,
+            mtm_pnl=0.0,
+            rate_pnl=0.0,
+            liquidity_pnl=0.0,
+            total_pnl=0.0,
+            ois_rate_used=0.0,
             calculation_timestamp=datetime.now()
         )
 
@@ -306,16 +465,16 @@ def compute_enhanced_pnl_vectorized(deals: List[GenericDeal],
             errors += 1
             logger.error(f"Erreur calcul deal {deal.deal_id}: {e}")
             
-            # Ligne d'erreur
+            # Ligne d'erreur avec zéros au lieu de NaN
             error_row = {
-                'deal_id': deal.deal_id,
+                'deal_id': getattr(deal, 'deal_id', 'ERROR'),
                 'comment': getattr(deal, 'comment', ''),
                 'product': getattr(deal, 'product', ''),
-                'total_pnl': np.nan,
-                'accrued_pnl': np.nan,
-                'mtm_pnl': np.nan,
-                'rate_pnl': np.nan,
-                'liquidity_pnl': np.nan,
+                'total_pnl': 0.0,
+                'accrued_pnl': 0.0,
+                'mtm_pnl': 0.0,
+                'rate_pnl': 0.0,
+                'liquidity_pnl': 0.0,
                 'error': str(e)
             }
             results.append(error_row)
