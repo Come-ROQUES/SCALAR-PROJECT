@@ -1,11 +1,9 @@
 
 # SCALAR - Advanced Treasury Dashboard
 
-## Version 2.2 - Clean & Professional
+## Version 2.2 
 
 **Dernières améliorations (Août 2025):**
-- **Interface professionnelle** : Suppression de tous les emojis 
-- **Code épuré** : Suppression des connecteurs inutiles (Bloomberg)
 - **Architecture simplifiée** : Nettoyage des dépendances (-75% de complexité)
 - **CI/CD optimisé** : Pipeline simplifié (390 → 50 lignes)
 - **Performance** : Code plus focalisé et maintenable
@@ -16,7 +14,7 @@
 
 **Nom du Projet** : SCALAR
 **Type** : Application Streamlit modulaire pour gestion de portefeuille treasury  
-**Version Actuelle** : 2.2 - Clean & Professional  
+**Version Actuelle** : 2.2   
 **Dernière MAJ** : 2025-08-23  
 **Développeur Principal** : Côme ROQUES  
 
