@@ -61,26 +61,98 @@ class _TreasuryAccessor:
 
 def build_template_generic() -> bytes:
     """
-    Construit un template Excel pour le format générique
+    Construit un template Excel pour le format générique avec 20 positions d'exemple
     
     Returns:
         bytes: Contenu du fichier Excel template
     """
     try:
-        # Données d'exemple
+        # Données d'exemple avec 20 positions
         sample_data = {
-            'comment': ['EUR/USD FX Swap', 'USD IRS 3Y', 'GBP Deposit 6M', 'CHF Loan 1Y'],
-            'product': ['FX_SWAP', 'IRS', 'DEPOSIT', 'LOAN'],
-            'deal_id': ['FXS001', 'IRS001', 'DEP001', 'LOA001'],
-            'd_or_l': ['L', 'D', 'D', 'L'],
-            'pair_currency': ['EUR/USD', 'USD', 'GBP', 'CHF'],
-            'amount': [10_000_000, 50_000_000, 25_000_000, 15_000_000],
-            'trade_date': ['2025-08-01', '2025-08-01', '2025-08-01', '2025-08-01'],
-            'value_date': ['2025-08-03', '2025-08-03', '2025-08-03', '2025-08-03'],
-            'maturity_date': ['2025-12-03', '2028-08-03', '2026-02-03', '2026-08-03'],
-            'client_rate': [0.0450, 0.0425, 0.0380, 0.0400],
-            'ois_equivalent_rate': [0.0440, 0.0420, 0.0375, 0.0395],
-            'trader_id': ['TRD001', 'TRD002', 'TRD001', 'TRD003']
+            'comment': [
+                'EUR/USD FX Swap Q4', 'USD IRS 3Y Fixed', 'GBP Deposit 6M', 'CHF Loan 1Y',
+                'JPY/USD FX Forward', 'EUR IRS 5Y Receiver', 'CAD Deposit 3M', 'AUD Loan 2Y',
+                'USD/CHF FX Swap H1', 'GBP IRS 2Y Payer', 'EUR Deposit 1Y', 'USD Loan 6M',
+                'GBP/USD FX Forward', 'CHF IRS 7Y Fixed', 'JPY Deposit 9M', 'CAD Loan 18M',
+                'EUR/GBP Cross Currency', 'AUD IRS 4Y Receiver', 'USD Deposit 2M', 'SEK Loan 3Y'
+            ],
+            'product': [
+                'FX_SWAP', 'IRS', 'DEPOSIT', 'LOAN',
+                'FX_SWAP', 'IRS', 'DEPOSIT', 'LOAN',
+                'FX_SWAP', 'IRS', 'DEPOSIT', 'LOAN',
+                'FX_SWAP', 'IRS', 'DEPOSIT', 'LOAN',
+                'FX_SWAP', 'IRS', 'DEPOSIT', 'LOAN'
+            ],
+            'deal_id': [
+                'FXS001', 'IRS001', 'DEP001', 'LOA001',
+                'FXS002', 'IRS002', 'DEP002', 'LOA002',
+                'FXS003', 'IRS003', 'DEP003', 'LOA003',
+                'FXS004', 'IRS004', 'DEP004', 'LOA004',
+                'FXS005', 'IRS005', 'DEP005', 'LOA005'
+            ],
+            'd_or_l': [
+                'L', 'D', 'D', 'L',
+                'L', 'D', 'D', 'L',
+                'L', 'D', 'D', 'L',
+                'L', 'D', 'D', 'L',
+                'L', 'D', 'D', 'L'
+            ],
+            'pair_currency': [
+                'EUR/USD', 'USD', 'GBP', 'CHF',
+                'JPY/USD', 'EUR', 'CAD', 'AUD',
+                'USD/CHF', 'GBP', 'EUR', 'USD',
+                'GBP/USD', 'CHF', 'JPY', 'CAD',
+                'EUR/GBP', 'AUD', 'USD', 'SEK'
+            ],
+            'amount': [
+                10_000_000, 50_000_000, 25_000_000, 15_000_000,
+                8_000_000, 75_000_000, 30_000_000, 20_000_000,
+                12_000_000, 40_000_000, 35_000_000, 18_000_000,
+                15_000_000, 60_000_000, 22_000_000, 25_000_000,
+                18_000_000, 45_000_000, 28_000_000, 32_000_000
+            ],
+            'trade_date': [
+                '2025-08-01', '2025-08-01', '2025-08-01', '2025-08-01',
+                '2025-08-02', '2025-08-02', '2025-08-02', '2025-08-02',
+                '2025-08-05', '2025-08-05', '2025-08-05', '2025-08-05',
+                '2025-08-06', '2025-08-06', '2025-08-06', '2025-08-06',
+                '2025-08-07', '2025-08-07', '2025-08-07', '2025-08-07'
+            ],
+            'value_date': [
+                '2025-08-03', '2025-08-03', '2025-08-03', '2025-08-03',
+                '2025-08-04', '2025-08-04', '2025-08-04', '2025-08-04',
+                '2025-08-07', '2025-08-07', '2025-08-07', '2025-08-07',
+                '2025-08-08', '2025-08-08', '2025-08-08', '2025-08-08',
+                '2025-08-09', '2025-08-09', '2025-08-09', '2025-08-09'
+            ],
+            'maturity_date': [
+                '2025-12-03', '2028-08-03', '2026-02-03', '2026-08-03',
+                '2026-01-04', '2030-08-04', '2025-11-04', '2027-08-04',
+                '2026-02-07', '2027-08-07', '2026-08-07', '2026-02-07',
+                '2026-03-08', '2032-08-08', '2026-05-08', '2027-02-08',
+                '2026-04-09', '2029-08-09', '2025-10-09', '2028-08-09'
+            ],
+            'client_rate': [
+                0.0450, 0.0425, 0.0380, 0.0400,
+                0.0465, 0.0410, 0.0355, 0.0415,
+                0.0475, 0.0435, 0.0385, 0.0405,
+                0.0455, 0.0420, 0.0370, 0.0410,
+                0.0480, 0.0440, 0.0375, 0.0425
+            ],
+            'ois_equivalent_rate': [
+                0.0440, 0.0420, 0.0375, 0.0395,
+                0.0460, 0.0405, 0.0350, 0.0410,
+                0.0470, 0.0430, 0.0380, 0.0400,
+                0.0450, 0.0415, 0.0365, 0.0405,
+                0.0475, 0.0435, 0.0370, 0.0420
+            ],
+            'trader_id': [
+                'TRD001', 'TRD002', 'TRD001', 'TRD003',
+                'TRD004', 'TRD002', 'TRD005', 'TRD003',
+                'TRD001', 'TRD006', 'TRD002', 'TRD004',
+                'TRD007', 'TRD003', 'TRD008', 'TRD005',
+                'TRD009', 'TRD001', 'TRD010', 'TRD006'
+            ]
         }
         
         output = io.BytesIO()

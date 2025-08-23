@@ -154,6 +154,28 @@ def _display_import_results(deals: List[GenericDeal], warnings: List[str], metad
         
         # Métadonnées
         _display_import_metadata(metadata)
+        
+        # Auto-calcul PnL pour faciliter l'usage
+        with st.spinner("Calcul PnL automatique..."):
+            try:
+                # Import des modules PnL
+                from treasury.pnl import compute_enhanced_pnl_vectorized
+                from treasury.models import PnLConfig
+                
+                # Configuration par défaut
+                config = PnLConfig()
+                
+                # Calcul PnL
+                df_pnl = compute_enhanced_pnl_vectorized(deals, config)
+                st.session_state.df_pnl_enhanced = df_pnl
+                
+                if not df_pnl.empty:
+                    total_pnl = df_pnl['total_pnl'].sum() / 1_000_000  # En millions
+                    st.info(f"PnL calculé automatiquement: {total_pnl:+.2f}M USD")
+                    
+            except Exception as e:
+                logger.warning(f"Erreur calcul PnL automatique: {e}")
+                st.warning("Calcul PnL automatique échoué. Utilisez l'onglet PnL pour calculer manuellement.")
     else:
         st.error("ERROR Aucun deal valide importé")
     

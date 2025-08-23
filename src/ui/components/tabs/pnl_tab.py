@@ -10,7 +10,18 @@ from datetime import datetime
 from typing import Dict, Any, Optional
 
 # Imports Treasury - éviter import circulaire
-from treasury.cache import compute_pnl_with_cache
+try:
+    from treasury.cache import compute_pnl_with_cache
+except ImportError:
+    from treasury.pnl import compute_enhanced_pnl_vectorized
+    from treasury.models import PnLConfig
+    
+    def compute_pnl_with_cache(deals, config_dict=None):
+        """Fallback si cache non disponible"""
+        if config_dict is None:
+            config_dict = {}
+        config = PnLConfig(**config_dict)
+        return compute_enhanced_pnl_vectorized(deals, config)
 
 try:
     from treasury.logging_config import logger
@@ -58,41 +69,87 @@ def _recalculate_pnl():
     """Recalcule le PnL avec la configuration actuelle"""
     deals = st.session_state.get('generic_deals', [])
     
+    if not deals:
+        st.error("Aucun deal importé")
+        return
+    
     with st.spinner("Calcul en cours..."):
         start_time = time.time()
-        df_pnl = compute_pnl_with_cache(deals, st.session_state.get('pnl_config', {}))
+        
+        # Configuration par défaut si pas définie
+        config_dict = st.session_state.get('pnl_config', {
+            'calculate_accrued': True,
+            'calculate_mtm': True,
+            'calculate_rate': True,
+            'calculate_liquidity': True,
+            'ois_rate_override': None
+        })
+        
+        df_pnl = compute_pnl_with_cache(deals, config_dict)
         st.session_state.df_pnl_enhanced = df_pnl
         calc_time = time.time() - start_time
-        st.success(f"✅ PnL recalculé en {calc_time:.1f}s")
+        st.success(f"PnL recalculé en {calc_time:.1f}s")
+        st.rerun()  # Forcer le refresh de l'interface
 
 
 def _run_stress_test():
     """Lance un test de stress avec choc de taux"""
     deals = st.session_state.get('generic_deals', [])
-    test_config = st.session_state.get('pnl_config', {}).copy()
-    test_config['ois_rate_override'] = 0.055
+    
+    if not deals:
+        st.error("Aucun deal importé")
+        return
+        
+    config_dict = st.session_state.get('pnl_config', {
+        'calculate_accrued': True,
+        'calculate_mtm': True,
+        'calculate_rate': True,
+        'calculate_liquidity': True,
+        'ois_rate_override': None
+    }).copy()
+    
+    config_dict['ois_rate_override'] = 0.055
     
     with st.spinner("Test en cours..."):
-        df_test = compute_pnl_with_cache(deals, test_config)
+        df_test = compute_pnl_with_cache(deals, config_dict)
         st.session_state.df_pnl_enhanced = df_test
         st.info("Test: OIS = 5.5%")
+        st.rerun()
 
 
 def _reset_pnl_config():
     """Remet la configuration PnL à zéro"""
-    if 'pnl_config' in st.session_state:
-        st.session_state.pnl_config['ois_rate_override'] = None
+    st.session_state.pnl_config = {
+        'calculate_accrued': True,
+        'calculate_mtm': True,
+        'calculate_rate': True,
+        'calculate_liquidity': True,
+        'ois_rate_override': None
+    }
     st.info("Configuration remise à zéro")
+    st.rerun()
 
 
 def _render_pnl_calculations():
     """Affichage des calculs et résultats PnL"""
     deals = st.session_state.get('generic_deals', [])
     
+    if not deals:
+        st.info("Aucun deal importé. Allez dans l'onglet Import pour charger des données.")
+        return
+    
     # Calcul initial si nécessaire
     if st.session_state.get('df_pnl_enhanced') is None or st.session_state.df_pnl_enhanced.empty:
         with st.spinner("Calcul PnL initial..."):
-            df_pnl = compute_pnl_with_cache(deals, st.session_state.get('pnl_config', {}))
+            config_dict = st.session_state.get('pnl_config', {
+                'calculate_accrued': True,
+                'calculate_mtm': True,
+                'calculate_rate': True,
+                'calculate_liquidity': True,
+                'ois_rate_override': None
+            })
+            
+            df_pnl = compute_pnl_with_cache(deals, config_dict)
             st.session_state.df_pnl_enhanced = df_pnl
     
     df_pnl = st.session_state.df_pnl_enhanced
