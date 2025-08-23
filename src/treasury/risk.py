@@ -6,7 +6,7 @@ Extrait du monolithe app.py
 import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
-from typing import Dict, List, Union, Any, Optional
+from typing import Dict, List
 
 from .analytics import convert_generic_to_analytics_format
 from .logging_config import logger

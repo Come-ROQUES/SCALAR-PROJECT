@@ -56,7 +56,7 @@ def setup_streamlit_page():
 
 def render_main_header():
     """Affichage de l'en-tête principal moderne"""
-    st.markdown(UIConfig.get_main_header_html(), unsafe_allow_html=True)
+    st.markdown(UIConfig.get_header_html(), unsafe_allow_html=True)
 
 
 def render_navigation_tabs():

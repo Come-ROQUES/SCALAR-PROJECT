@@ -1,0 +1,158 @@
+# Docker Compose pour environnement complet SCALAR
+# Dashboard + Redis + Monitoring
+
+version: '3.8'
+
+services:
+  
+  # Treasury Dashboard principal
+  scalar-app:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    container_name: scalar-dashboard
+    ports:
+      - "8501:8501"
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=${REDIS_PASSWORD:-}
+      - REDIS_DB=0
+      - ENVIRONMENT=production
+    volumes:
+      - ./data:/app/data:ro  # Données en lecture seule
+      - ./logs:/app/logs     # Logs persistants
+    depends_on:
+      - redis
+    restart: unless-stopped
+    networks:
+      - scalar-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8501/_stcore/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Cache Redis
+  redis:
+    image: redis:7-alpine
+    container_name: scalar-redis
+    ports:
+      - "6379:6379"
+    environment:
+      - REDIS_PASSWORD=${REDIS_PASSWORD:-}
+    command: >
+      sh -c "
+        if [ -n \"$$REDIS_PASSWORD\" ]; then
+          redis-server --requirepass $$REDIS_PASSWORD --maxmemory 512mb --maxmemory-policy allkeys-lru
+        else
+          redis-server --maxmemory 512mb --maxmemory-policy allkeys-lru
+        fi
+      "
+    volumes:
+      - redis-data:/data
+      - ./docker/redis.conf:/usr/local/etc/redis/redis.conf:ro
+    restart: unless-stopped
+    networks:
+      - scalar-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Redis Commander (Interface web Redis)
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    container_name: scalar-redis-ui
+    ports:
+      - "8082:8081"
+    environment:
+      - REDIS_HOSTS=local:redis:6379
+      - REDIS_PASSWORD=${REDIS_PASSWORD:-}
+    depends_on:
+      - redis
+    restart: unless-stopped
+    networks:
+      - scalar-network
+    profiles:
+      - debug  # Activé seulement avec: docker-compose --profile debug up
+
+  # Monitoring avec Prometheus (optionnel)
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: scalar-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./docker/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=7d'
+      - '--web.enable-lifecycle'
+    restart: unless-stopped
+    networks:
+      - scalar-network
+    profiles:
+      - monitoring
+
+  # Grafana pour dashboards (optionnel)
+  grafana:
+    image: grafana/grafana:latest
+    container_name: scalar-grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD:-admin}
+      - GF_USERS_ALLOW_SIGN_UP=false
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./docker/grafana/dashboards:/var/lib/grafana/dashboards
+      - ./docker/grafana/provisioning:/etc/grafana/provisioning
+    depends_on:
+      - prometheus
+    restart: unless-stopped
+    networks:
+      - scalar-network
+    profiles:
+      - monitoring
+
+  # Nginx reverse proxy (production)
+  nginx:
+    image: nginx:alpine
+    container_name: scalar-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./docker/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./docker/ssl:/etc/nginx/ssl:ro  # Certificats SSL
+    depends_on:
+      - scalar-app
+    restart: unless-stopped
+    networks:
+      - scalar-network
+    profiles:
+      - production
+
+# Volumes persistants
+volumes:
+  redis-data:
+    driver: local
+  prometheus-data:
+    driver: local
+  grafana-data:
+    driver: local
+
+# Réseau isolé
+networks:
+  scalar-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16

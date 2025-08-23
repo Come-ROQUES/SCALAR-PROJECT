@@ -1,24 +1,20 @@
-"""
-Configuration centralisée pour le Treasury Dashboard
-Version moderne avec thème Viridis minimaliste
-"""
-
 from dataclasses import dataclass
-from typing import Dict, Any
+from typing import Dict, Any, List, Optional
+from .assets import get_image_b64
 
 
 @dataclass(frozen=True)
 class Settings:
     """Configuration principale de l'application"""
-    APP_TITLE: str = "Treasury Analytics"
-    APP_SUBTITLE: str = "Modern Portfolio Management"
-    PAGE_ICON: str = "📊"
+    APP_TITLE: str = "SCALAR"
+    APP_SUBTITLE: str = "Advanced Treasury & Risk Analytics"
+    PAGE_ICON: str = get_image_b64("logo.png") or "💎"
     MAX_FILE_SIZE_MB: int = 10
     MAX_ROWS_PER_SHEET: int = 10_000
     
     # Configuration Streamlit
     LAYOUT: str = "wide"
-    INITIAL_SIDEBAR_STATE: str = "collapsed"  # Plus moderne : sidebar cachée par défaut
+    INITIAL_SIDEBAR_STATE: str = "collapsed"
     
     # Limites par défaut
     DEFAULT_VAR_LIMIT: float = 1_000_000
@@ -29,308 +25,324 @@ class Settings:
 # Instance globale des settings
 settings = Settings()
 
+# Charge l'image de fond en base64
+# Assurez-vous d'avoir un fichier 'background.png' dans static/images/
+background_image_b64 = get_image_b64("background.png")
 
-# Palette Viridis pour cohérence visuelle
-VIRIDIS_COLORS = {
-    'primary': '#440154',      # Violet foncé
-    'secondary': '#31688e',    # Bleu-vert foncé
-    'accent': '#35b779',       # Vert
-    'light': '#fde725',        # Jaune-vert clair
-    'dark': '#0d1421',         # Presque noir
-    'surface': '#1a1d29',      # Gris très foncé
-    'surface_light': '#2a2d3a', # Gris foncé
-    'text_primary': '#ffffff',  # Blanc
-    'text_secondary': '#b8bcc8', # Gris clair
+# Palette de couleurs améliorée par le designer
+COLORS = {
+    # Couleurs de base (Viridis)
+    'primary': '#1f968b',      # Teal
+    'secondary': '#35b779',    # Vert
+    'accent': '#29B6F6',       # Bleu électrique
+    'dark': '#440154',         # Violet profond
+    'light': '#ffffff',
+    
+    # Effet Glass affiné
+    'glass_bg': 'rgba(255, 255, 255, 0.05)',
+    'glass_border': 'rgba(255, 255, 255, 0.2)',
+    'glass_hover': 'rgba(255, 255, 255, 0.1)',
+    
+    # Couleurs sémantiques
     'success': '#35b779',
     'warning': '#fde725',
-    'error': '#ff6b6b',
-    'info': '#31688e'
+    'error': '#e74c3c', # Rouge plus doux
+    'info': '#3498db',  # Bleu clair
+    
+    # Typographie
+    'text_primary': 'rgba(255, 255, 255, 0.95)',
+    'text_secondary': 'rgba(255, 255, 255, 0.7)',
+    'text_muted': 'rgba(255, 255, 255, 0.5)',
+    
+    # Ombres
+    'shadow': 'rgba(0, 0, 0, 0.25)'
 }
 
 
-# Configuration CSS moderne et minimaliste
+# CSS de niveau "Apple Liquid Glass"
 CSS_STYLES = f"""
 <style>
-/* Variables CSS pour cohérence */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* Animations & Keyframes */
+@keyframes text-gradient-animation {{
+    0% {{ background-position: 0% 50%; }}
+    50% {{ background-position: 100% 50%; }}
+    100% {{ background-position: 0% 50%; }}
+}}
+
+@keyframes fade-in-up {{
+    from {{ opacity: 0; transform: translateY(20px); }}
+    to {{ opacity: 1; transform: translateY(0); }}
+}}
+
+@keyframes shimmer-effect {{
+    0% {{ transform: translateX(-100%) skewX(-25deg); }}
+    100% {{ transform: translateX(200%) skewX(-25deg); }}
+}}
+
+/* Variables CSS pour un design system cohérent */
 :root {{
-    --primary: {VIRIDIS_COLORS['primary']};
-    --secondary: {VIRIDIS_COLORS['secondary']};
-    --accent: {VIRIDIS_COLORS['accent']};
-    --light: {VIRIDIS_COLORS['light']};
-    --surface: {VIRIDIS_COLORS['surface']};
-    --surface-light: {VIRIDIS_COLORS['surface_light']};
-    --text-primary: {VIRIDIS_COLORS['text_primary']};
-    --text-secondary: {VIRIDIS_COLORS['text_secondary']};
-    --border-radius: 12px;
-    --shadow: 0 4px 20px rgba(68, 1, 84, 0.15);
-    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --primary: {COLORS['primary']};
+    --secondary: {COLORS['secondary']};
+    --accent: {COLORS['accent']};
+    --dark: {COLORS['dark']};
+    --light: {COLORS['light']};
+    
+    --glass-bg: {COLORS['glass_bg']};
+    --glass-border: {COLORS['glass_border']};
+    --glass-hover: {COLORS['glass_hover']};
+    
+    --text-primary: {COLORS['text_primary']};
+    --text-secondary: {COLORS['text_secondary']};
+    --text-muted: {COLORS['text_muted']};
+    
+    --radius: 18px; /* Rayon plus arrondi, style Apple */
+    --blur: 16px;   /* Flou subtil */
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); /* Transition fluide */
+    
+    --shadow-color: rgba(0, 0, 0, 0.15);
+    --shadow-elevation-low: 0 2px 10px var(--shadow-color);
+    --shadow-elevation-medium: 0 8px 24px var(--shadow-color);
+    --shadow-elevation-high: 0 16px 48px var(--shadow-color);
 }}
 
-/* Reset et base */
-.main > div {{
-    padding-top: 2rem;
-    padding-bottom: 2rem;
-}}
-
-/* Header moderne */
-.modern-header {{
-    background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-    padding: 2.5rem 2rem;
-    border-radius: var(--border-radius);
-    color: var(--text-primary);
-    text-align: center;
-    margin-bottom: 2rem;
-    box-shadow: var(--shadow);
-    position: relative;
-    overflow: hidden;
-}}
-
-.modern-header::before {{
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 3px;
-    background: linear-gradient(90deg, var(--accent), var(--light));
-}}
-
-.modern-header h1 {{
-    font-size: 2.5rem;
-    font-weight: 700;
-    margin: 0 0 0.5rem 0;
-    letter-spacing: -0.025em;
-}}
-
-.modern-header p {{
-    font-size: 1.1rem;
-    opacity: 0.9;
+/* Reset et styles globaux */
+* {{
     margin: 0;
-    font-weight: 300;
+    padding: 0;
+    box-sizing: border-box;
 }}
 
-/* Cards modernes */
-.modern-card {{
-    background: var(--surface);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: var(--border-radius);
-    padding: 1.5rem;
-    margin-bottom: 1rem;
+.stApp {{
+    background-image: url("{background_image_b64}");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    font-family: 'Inter', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}}
+
+.stApp::before {{
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(135deg, {COLORS['dark']} 0%, {COLORS['primary']} 50%, {COLORS['accent']} 100%);
+    opacity: 0.75;
+    z-index: -2;
+}}
+
+/* Amélioration de la lisibilité du texte */
+h1, h2, h3, p, div, span, .stMarkdown {{
+    text-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}}
+
+/* Composant "Glass Card" amélioré */
+.glass-card {{
+    background: var(--glass-bg);
+    backdrop-filter: blur(var(--blur));
+    -webkit-backdrop-filter: blur(var(--blur));
+    border-radius: var(--radius);
+    padding: 2rem;
+    margin: 1rem 0;
     transition: var(--transition);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--shadow-elevation-low), inset 0 0 0 1px var(--glass-border);
 }}
 
-.modern-card:hover {{
-    transform: translateY(-2px);
-    box-shadow: var(--shadow);
-    border-color: rgba(255, 255, 255, 0.2);
+.glass-card:hover {{
+    background: var(--glass-hover);
+    transform: translateY(-4px) scale(1.01);
+    box-shadow: var(--shadow-elevation-medium), inset 0 0 0 1px var(--glass-border);
 }}
 
-/* Métriques redesignées */
-.metric-modern {{
-    background: linear-gradient(135deg, var(--surface) 0%, var(--surface-light) 100%);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: var(--border-radius);
-    padding: 1.5rem;
+/* Header Premium */
+.liquid-header {{
+    position: relative;
+    background: var(--glass-bg);
+    backdrop-filter: blur(var(--blur));
+    border-radius: var(--radius);
+    padding: 4rem 2rem;
+    margin-bottom: 2rem;
+    text-align: center;
+    overflow: hidden;
+    transition: var(--transition);
+    box-shadow: var(--shadow-elevation-medium), inset 0 0 0 1px var(--glass-border);
+}}
+
+.liquid-header::after {{
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+    animation: shimmer-effect 4s ease-in-out infinite;
+    animation-delay: 1.5s;
+}}
+
+.liquid-header h1 {{
+    font-size: 3.5rem;
+    font-weight: 700;
+    background: linear-gradient(90deg, var(--accent), var(--light), var(--secondary), var(--accent));
+    background-size: 400% 400%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: text-gradient-animation 10s ease infinite;
+    margin-bottom: 0.75rem;
+}}
+
+.liquid-header p {{
+    color: var(--text-secondary);
+    font-size: 1.2rem;
+    animation: fade-in-up 0.8s ease-out 0.3s forwards;
+    opacity: 0;
+}}
+
+.liquid-header .author {{
+    font-size: 1rem;
+    color: var(--text-muted);
+    margin-top: 1.5rem;
+    animation: fade-in-up 0.8s ease-out 0.6s forwards;
+    opacity: 0;
+}}
+
+/* Cartes Métriques "Apple-like" */
+.metric-card {{
+    position: relative;
+    background: var(--glass-bg);
+    backdrop-filter: blur(var(--blur));
+    border-radius: var(--radius);
+    padding: 2rem;
     text-align: center;
     transition: var(--transition);
-    position: relative;
+    box-shadow: var(--shadow-elevation-low), inset 0 0 0 1px var(--glass-border);
     overflow: hidden;
 }}
 
-.metric-modern::before {{
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 3px;
-    background: linear-gradient(90deg, var(--accent), var(--light));
+.metric-card:hover {{
+    transform: translateY(-6px) scale(1.03);
+    box-shadow: var(--shadow-elevation-high), inset 0 0 0 1px var(--glass-border);
 }}
 
-.metric-modern:hover {{
-    transform: translateY(-3px);
-    box-shadow: 0 8px 30px rgba(68, 1, 84, 0.2);
+.metric-card:hover::before {{
+    content: '';
+    position: absolute;
+    top: -50%; left: -50%;
+    width: 200%; height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 40%);
+    transform: scale(0);
+    animation: pulse 1s ease-out;
+}}
+
+@keyframes pulse {{
+    from {{ transform: scale(0); opacity: 1; }}
+    to {{ transform: scale(1); opacity: 0; }}
 }}
 
 .metric-value {{
-    font-size: 2rem;
+    font-size: 3rem;
     font-weight: 700;
-    color: var(--text-primary);
+    color: var(--accent);
     margin-bottom: 0.5rem;
 }}
 
 .metric-label {{
-    font-size: 0.875rem;
+    font-size: 1rem;
     color: var(--text-secondary);
     text-transform: uppercase;
-    letter-spacing: 0.05em;
-    font-weight: 500;
+    letter-spacing: 0.1em;
 }}
 
-/* Alertes modernes */
-.alert-modern {{
-    border-radius: var(--border-radius);
-    padding: 1rem 1.5rem;
+/* Grille de KPIs */
+.kpi-grid {{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin: 2rem 0;
+}}
+
+/* Alertes stylisées */
+.alert {{
+    background: var(--glass-bg);
+    backdrop-filter: blur(var(--blur));
+    border-radius: var(--radius);
+    padding: 1.25rem 1.5rem;
     margin: 1rem 0;
-    border-left: 4px solid;
-    backdrop-filter: blur(10px);
-    position: relative;
+    border-left: 5px solid;
+    box-shadow: var(--shadow-elevation-low), inset 0 0 0 1px var(--glass-border);
 }}
 
-.alert-success {{
-    background: rgba(53, 183, 121, 0.1);
-    border-left-color: var(--accent);
-    color: var(--accent);
-}}
+.alert-success {{ border-left-color: {COLORS['success']}; }}
+.alert-warning {{ border-left-color: {COLORS['warning']}; }}
+.alert-error {{ border-left-color: {COLORS['error']}; }}
+.alert-info {{ border-left-color: {COLORS['info']}; }}
 
-.alert-warning {{
-    background: rgba(253, 231, 37, 0.1);
-    border-left-color: var(--light);
-    color: var(--light);
-}}
-
-.alert-error {{
-    background: rgba(255, 107, 107, 0.1);
-    border-left-color: #ff6b6b;
-    color: #ff6b6b;
-}}
-
-.alert-info {{
-    background: rgba(49, 104, 142, 0.1);
-    border-left-color: var(--secondary);
-    color: var(--secondary);
-}}
-
-/* Boutons modernes */
-.btn-modern {{
-    background: linear-gradient(135deg, var(--primary), var(--secondary));
-    color: var(--text-primary);
-    border: none;
-    border-radius: var(--border-radius);
-    padding: 0.75rem 1.5rem;
+/* Badges de statut */
+.status-badge {{
+    display: inline-block;
+    padding: 0.5em 1em;
+    font-size: 0.85rem;
     font-weight: 600;
-    font-size: 0.875rem;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    cursor: pointer;
-    transition: var(--transition);
-    box-shadow: 0 2px 8px rgba(68, 1, 84, 0.3);
+    line-height: 1;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: 2em; /* Pill shape */
+    color: var(--dark);
 }}
 
-.btn-modern:hover {{
-    transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(68, 1, 84, 0.4);
+.status-badge-success {{ background-color: {COLORS['success']}; }}
+.status-badge-warning {{ background-color: {COLORS['warning']}; }}
+.status-badge-error {{ background-color: {COLORS['error']}; color: var(--light); }}
+.status-badge-info {{ background-color: {COLORS['info']}; }}
+.status-badge-ok {{ background-color: {COLORS['secondary']}; }}
+
+/* Améliorations des composants Streamlit natifs */
+.stButton > button {{
+    border-radius: var(--radius) !important;
+    transition: var(--transition) !important;
+    background: var(--glass-bg) !important;
+    backdrop-filter: blur(var(--blur)) !important;
+    box-shadow: var(--shadow-elevation-low) !important;
+    border: 1px solid var(--glass-border) !important;
 }}
 
-/* Sidebar moderne */
-.css-1d391kg {{
-    background: var(--surface);
-    border-right: 1px solid rgba(255, 255, 255, 0.1);
-}}
-
-/* Dataframes modernes */
-.dataframe {{
-    border-radius: var(--border-radius);
-    overflow: hidden;
-    box-shadow: var(--shadow);
-    background: var(--surface);
-}}
-
-/* Progress bars */
-.stProgress > div > div > div {{
-    background: linear-gradient(90deg, var(--accent), var(--light));
-    border-radius: 10px;
-}}
-
-/* Selectbox et inputs */
-.stSelectbox > div > div {{
-    background: var(--surface-light);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: var(--border-radius);
+.stButton > button:hover {{
+    background: var(--glass-hover) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: var(--shadow-elevation-medium) !important;
 }}
 
 .stTextInput > div > div > input {{
-    background: var(--surface-light);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: var(--border-radius);
-    color: var(--text-primary);
+    border-radius: var(--radius) !important;
+    transition: var(--transition) !important;
+    background: var(--glass-bg) !important;
+    border: 1px solid var(--glass-border) !important;
 }}
 
-/* Tabs modernes */
-.stTabs [data-baseweb="tab-list"] {{
-    gap: 0.5rem;
+.stTextInput > div > div > input:focus {{
+    border-color: var(--primary) !important;
+    box-shadow: 0 0 0 3px var(--primary) !important;
 }}
 
-.stTabs [data-baseweb="tab"] {{
-    background: var(--surface);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: var(--border-radius);
-    color: var(--text-secondary);
-    padding: 0.75rem 1.5rem;
-    transition: var(--transition);
-}}
-
-.stTabs [data-baseweb="tab"][aria-selected="true"] {{
-    background: linear-gradient(135deg, var(--primary), var(--secondary));
-    border-color: var(--accent);
-    color: var(--text-primary);
-}}
-
-/* Animation de chargement */
-@keyframes pulse-viridis {{
-    0% {{ opacity: 1; transform: scale(1); }}
-    50% {{ opacity: 0.7; transform: scale(1.02); }}
-    100% {{ opacity: 1; transform: scale(1); }}
-}}
-
-.loading-animation {{
-    animation: pulse-viridis 2s ease-in-out infinite;
-}}
-
-/* Responsive design */
+/* Responsive Design */
 @media (max-width: 768px) {{
-    .modern-header {{
-        padding: 1.5rem 1rem;
-    }}
-    
-    .modern-header h1 {{
-        font-size: 2rem;
-    }}
-    
-    .metric-modern {{
-        margin-bottom: 1rem;
-    }}
-}}
-
-/* Scrollbar personnalisée */
-::-webkit-scrollbar {{
-    width: 8px;
-    height: 8px;
-}}
-
-::-webkit-scrollbar-track {{
-    background: var(--surface);
-}}
-
-::-webkit-scrollbar-thumb {{
-    background: linear-gradient(135deg, var(--primary), var(--secondary));
-    border-radius: 4px;
-}}
-
-::-webkit-scrollbar-thumb:hover {{
-    background: linear-gradient(135deg, var(--secondary), var(--accent));
+    .liquid-header h1 {{ font-size: 2.5rem; }}
+    .liquid-header {{ padding: 3rem 1.5rem; }}
+    .kpi-grid {{ grid-template-columns: 1fr; }}
+    .glass-card, .metric-card {{ padding: 1.5rem; }}
 }}
 </style>
 """
 
 
 class UIConfig:
-    """Configuration pour l'interface utilisateur moderne"""
+    """Configuration UI pour un style "Apple Liquid Glass" premium."""
     
     @staticmethod
     def get_page_config() -> Dict[str, Any]:
-        """Configuration Streamlit page"""
         return {
             "page_title": settings.APP_TITLE,
             "page_icon": settings.PAGE_ICON,
@@ -339,91 +351,62 @@ class UIConfig:
         }
     
     @staticmethod
-    def get_main_header_html() -> str:
-        """HTML pour l'en-tête principal moderne"""
+    def get_header_html() -> str:
         return f"""
-        <div class="modern-header">
+        <div class="liquid-header">
             <h1>{settings.APP_TITLE}</h1>
             <p>{settings.APP_SUBTITLE}</p>
+            <p class="author">by Côme ROQUES</p>
         </div>
         """
     
     @staticmethod
-    def get_metric_card_html(title: str, value: str, delta: str = None, delta_color: str = "normal") -> str:
-        """Génère une carte métrique moderne"""
-        delta_html = ""
-        if delta:
-            delta_class = f"metric-delta metric-delta-{delta_color}"
-            delta_html = f'<div class="{delta_class}">{delta}</div>'
-        
+    def get_metric_html(title: str, value: str) -> str:
         return f"""
-        <div class="metric-modern">
+        <div class="metric-card">
             <div class="metric-value">{value}</div>
             <div class="metric-label">{title}</div>
-            {delta_html}
         </div>
         """
     
     @staticmethod
     def get_alert_html(alert_type: str, title: str, message: str = "") -> str:
-        """Génère une alerte moderne"""
         return f"""
-        <div class="alert-modern alert-{alert_type}">
-            <strong>{title}</strong>
-            {f"<br><span style='opacity: 0.9;'>{message}</span>" if message else ""}
+        <div class="alert alert-{alert_type}">
+            <strong style="color: var(--text-primary);">{title}</strong>
+            {f"<div style='margin-top: 0.5rem; color: var(--text-secondary);'>{message}</div>" if message else ""}
         </div>
         """
     
     @staticmethod
     def get_card_html(content: str, title: str = None) -> str:
-        """Génère une carte moderne"""
-        title_html = f"<h3 style='margin-top: 0; color: var(--text-primary);'>{title}</h3>" if title else ""
+        title_html = f"<h3 style='color: var(--text-primary); margin-bottom: 1rem;'>{title}</h3>" if title else ""
         return f"""
-        <div class="modern-card">
+        <div class="glass-card">
             {title_html}
             {content}
         </div>
         """
     
     @staticmethod
-    def get_loading_html(message: str = "Loading...") -> str:
-        """Génère un indicateur de chargement"""
-        return f"""
-        <div class="loading-animation" style="text-align: center; padding: 2rem;">
-            <div style="font-size: 1.1rem; color: var(--text-secondary);">{message}</div>
-        </div>
-        """
+    def get_status_badge_html(status: str, text: str) -> str:
+        """Génère un badge de statut HTML."""
+        return f'<span class="status-badge status-badge-{status}">{text}</span>'
     
     @staticmethod
-    def get_status_badge_html(status: str, text: str) -> str:
-        """Génère un badge de status moderne"""
-        status_colors = {
-            'success': 'var(--accent)',
-            'warning': 'var(--light)', 
-            'error': '#ff6b6b',
-            'info': 'var(--secondary)',
-            'default': 'var(--text-secondary)'
-        }
-        
-        color = status_colors.get(status, status_colors['default'])
-        
-        return f"""
-        <span class="status-badge-modern" style="
-            background: {color}20;
-            color: {color};
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            border: 1px solid {color}40;
-            display: inline-block;
-        ">{text}</span>
-        """
+    def get_kpi_grid_html(kpis: List[Dict[str, Any]]) -> str:
+        cards = ""
+        for kpi in kpis:
+            cards += f"""
+            <div class="metric-card">
+                <div class="metric-value">{kpi['value']}</div>
+                <div class="metric-label">{kpi['title']}</div>
+            </div>
+            """
+        return f'<div class="kpi-grid">{cards}</div>'
 
 
-# Configuration par défaut du session state
+# Configuration par défaut simplifiée
 DEFAULT_SESSION_STATE = {
     'generic_deals': [],
     'df_pnl_enhanced': None,
@@ -439,47 +422,41 @@ DEFAULT_SESSION_STATE = {
         'max_tenor_concentration': settings.DEFAULT_MAX_TENOR_CONCENTRATION,
         'var_limit': settings.DEFAULT_VAR_LIMIT
     },
-    'ui_theme': 'viridis_modern'  # Nouveau : thème UI
+    'ui_theme': 'liquid_glass',
+    'animations_enabled': True
 }
 
-
-# Extensions de fichiers autorisées
+# Extensions autorisées
 ALLOWED_EXTENSIONS = (".xlsx", ".xls")
 
-
-# Configuration logging moderne
-LOGGING_CONFIG = {
-    'level': 'INFO',
-    'format': '%(asctime)s | %(name)s | %(levelname)s | %(message)s',
-    'max_logs_in_session': 100,
-    'use_colors': True
-}
-
-
-# Configuration des graphiques Plotly avec thème Viridis
+# Configuration Plotly simplifiée
 PLOTLY_CONFIG = {
     'theme': 'plotly_dark',
     'color_palette': [
-        VIRIDIS_COLORS['primary'],
-        VIRIDIS_COLORS['secondary'], 
-        VIRIDIS_COLORS['accent'],
-        VIRIDIS_COLORS['light'],
-        '#8e44ad',  # Violet
-        '#e74c3c',  # Rouge
-        '#f39c12',  # Orange
-        '#2ecc71'   # Vert
+        COLORS['primary'], COLORS['secondary'], COLORS['accent'], 
+        COLORS['dark'], COLORS['success'], COLORS['warning']
     ],
-    'background_color': VIRIDIS_COLORS['surface'],
-    'grid_color': 'rgba(255, 255, 255, 0.1)',
-    'font_color': VIRIDIS_COLORS['text_primary']
+    'font_color': COLORS['text_primary'],
+    'background_color': COLORS['glass_bg'],
+    'font_family': 'Inter'
 }
 
-
-# Configuration des composants Streamlit
+# Thème Streamlit
 STREAMLIT_THEME = {
-    'primaryColor': VIRIDIS_COLORS['accent'],
-    'backgroundColor': VIRIDIS_COLORS['dark'],
-    'secondaryBackgroundColor': VIRIDIS_COLORS['surface'],
-    'textColor': VIRIDIS_COLORS['text_primary'],
-    'font': 'sans serif'
+    'primaryColor': COLORS['primary'],
+    'backgroundColor': COLORS['dark'],
+    'secondaryBackgroundColor': COLORS['glass_bg'],
+    'textColor': COLORS['text_primary'],
+    'font': 'Inter'
 }
+
+# Validation simple
+def validate_config():
+    """Valide la configuration"""
+    required = ['primary', 'secondary', 'accent', 'text_primary']
+    for color in required:
+        if color not in COLORS:
+            raise ValueError(f"Couleur manquante: {color}")
+    return True
+
+validate_config()

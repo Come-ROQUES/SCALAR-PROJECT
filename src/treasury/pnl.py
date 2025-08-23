@@ -242,14 +242,14 @@ def calculate_deal_pnl(deal: GenericDeal,
 
 
 def compute_enhanced_pnl_vectorized(deals: List[GenericDeal], 
-                                   pnl_config: Dict = None,
+                                   config: PnLConfig,
                                    market_data: MarketData = MOCK_MARKET_DATA) -> pd.DataFrame:
     """
     Calcul PnL vectorisé pour une liste de deals
     
     Args:
         deals: Liste des deals à valoriser
-        pnl_config: Configuration PnL (dict ou PnLConfig)
+        config: Configuration PnL (objet PnLConfig)
         market_data: Données de marché
         
     Returns:
@@ -261,13 +261,7 @@ def compute_enhanced_pnl_vectorized(deals: List[GenericDeal],
         logger.warning("Aucun deal fourni pour calcul PnL")
         return pd.DataFrame()
     
-    # Conversion config si nécessaire
-    if isinstance(pnl_config, dict):
-        config = PnLConfig(**pnl_config) if pnl_config else PnLConfig()
-    else:
-        config = pnl_config or PnLConfig()
-    
-    logger.info(f"Début calcul PnL Enhanced pour {len(deals)} deals")
+    logger.info(f"Début calcul PnL Enhanced pour {len(deals)} deals avec config: {config}")
     
     results = []
     errors = 0
