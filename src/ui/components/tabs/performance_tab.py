@@ -21,7 +21,7 @@ except ImportError:
 
 def render_performance_tab():
     """Onglet Performance Analytics"""
-    st.subheader("📊 Analyse de Performance")
+    st.subheader("Analyse de Performance")
     
     df_pnl = st.session_state.get('df_pnl_enhanced')
     deals = st.session_state.get('generic_deals', [])
@@ -41,7 +41,7 @@ def render_performance_tab():
 
 def _render_performance_kpis(df_pnl: pd.DataFrame):
     """KPIs de performance"""
-    st.markdown("### 🎯 KPIs de Performance")
+    st.markdown("### KPIs de Performance")
     
     summary = get_pnl_summary(df_pnl)
     
@@ -75,7 +75,7 @@ def _render_performance_kpis(df_pnl: pd.DataFrame):
 
 def _render_performance_by_product(df_pnl: pd.DataFrame):
     """Performance par produit"""
-    st.markdown("### 📈 Performance par Produit")
+    st.markdown("### Performance par Produit")
     
     if 'product' in df_pnl.columns and 'total_pnl' in df_pnl.columns:
         perf_by_product = df_pnl.groupby('product').agg({

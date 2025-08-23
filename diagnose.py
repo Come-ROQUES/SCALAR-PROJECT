@@ -23,7 +23,7 @@ def diagnose_project():
         "src/ui/app.py"
     ]
     
-    print("\n📋 FICHIERS ESSENTIELS:")
+    print("\nFICHIERS ESSENTIELS:")
     all_present = True
     for file in essential_files:
         file_path = current_dir / file
@@ -55,7 +55,7 @@ def diagnose_project():
             print(f"  ✅ {file.name}")
     
     # Recommandations
-    print("\n🔧 RECOMMANDATIONS:")
+    print("\nRECOMMANDATIONS:")
     if not all_present:
         print("  ❌ Fichiers manquants détectés")
         print("  👉 Créez les fichiers manqués selon la structure modulaire")

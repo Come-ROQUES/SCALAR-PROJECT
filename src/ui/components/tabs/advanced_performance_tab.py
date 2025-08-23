@@ -17,7 +17,7 @@ from treasury.logging_config import logger
 
 def render_advanced_performance_dashboard():
     """Dashboard de performance avancé"""
-    st.markdown("## 📊 Performance Analytics Advanced")
+    st.markdown("## Performance Analytics Advanced")
     
     df_pnl = st.session_state.get('df_pnl_enhanced', pd.DataFrame())
     
@@ -27,10 +27,10 @@ def render_advanced_performance_dashboard():
     
     # Navigation par onglets
     tab1, tab2, tab3, tab4 = st.tabs([
-        "🎯 Attribution PnL", 
-        "📈 Trends & Patterns", 
-        "⚖️ Risk-Adjusted Returns",
-        "🔄 Trade Analytics"
+        "Attribution PnL", 
+        "Trends & Patterns", 
+        "Risk-Adjusted Returns",
+        "Trade Analytics"
     ])
     
     with tab1:
@@ -48,7 +48,7 @@ def render_advanced_performance_dashboard():
 
 def render_pnl_attribution_analysis(df_pnl: pd.DataFrame):
     """Analyse d'attribution PnL détaillée"""
-    st.markdown("### 🎯 Attribution PnL Détaillée")
+    st.markdown("### Attribution PnL Détaillée")
     
     # Métriques globales
     col1, col2, col3, col4 = st.columns(4)
@@ -63,7 +63,7 @@ def render_pnl_attribution_analysis(df_pnl: pd.DataFrame):
     col4.metric("Deals Count", f"{len(df_pnl):,}")
     
     # Attribution par composante
-    st.markdown("#### 📊 Décomposition par Composante")
+    st.markdown("#### Décomposition par Composante")
     
     if all(col in df_pnl.columns for col in ['accrued_pnl', 'mtm_pnl', 'rate_pnl', 'liquidity_pnl']):
         
@@ -120,13 +120,13 @@ def render_pnl_attribution_analysis(df_pnl: pd.DataFrame):
 
 def render_trend_analysis(df_pnl: pd.DataFrame):
     """Analyse des tendances temporelles"""
-    st.markdown("### 📈 Analyse des Tendances")
+    st.markdown("### Analyse des Tendances")
     
     # Simulation de données historiques (à remplacer par vraies données)
     historical_data = generate_historical_pnl_simulation(df_pnl)
     
     # Évolution PnL dans le temps
-    st.markdown("#### 📊 Évolution PnL Temporelle")
+    st.markdown("#### Évolution PnL Temporelle")
     
     fig_evolution = go.Figure()
     
@@ -177,7 +177,7 @@ def render_trend_analysis(df_pnl: pd.DataFrame):
 
 def render_risk_adjusted_returns(df_pnl: pd.DataFrame):
     """Métriques de performance ajustées du risque"""
-    st.markdown("### ⚖️ Returns Ajustés du Risque")
+    st.markdown("### Returns Ajustés du Risque")
     
     # Calcul métriques risque-rendement
     metrics = calculate_risk_adjusted_metrics(df_pnl)
@@ -199,10 +199,10 @@ def render_risk_adjusted_returns(df_pnl: pd.DataFrame):
 
 def render_trade_analytics(df_pnl: pd.DataFrame):
     """Analytics spécifiques aux trades"""
-    st.markdown("### 🔄 Trade Analytics")
+    st.markdown("### Trade Analytics")
     
     # Distribution des tailles de deals
-    st.markdown("#### 📊 Distribution Tailles de Deals")
+    st.markdown("#### Distribution Tailles de Deals")
     
     if 'amount' in df_pnl.columns:
         fig_size_dist = px.histogram(
@@ -217,7 +217,7 @@ def render_trade_analytics(df_pnl: pd.DataFrame):
         st.plotly_chart(fig_size_dist, use_container_width=True)
     
     # Performance par produit
-    st.markdown("#### 🏷️ Performance par Type de Produit")
+    st.markdown("#### Performance par Type de Produit")
     
     if 'product' in df_pnl.columns:
         product_perf = df_pnl.groupby('product').agg({

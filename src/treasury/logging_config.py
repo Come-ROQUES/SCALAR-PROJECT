@@ -136,7 +136,7 @@ def log_calculation_summary(module: str, deals_processed: int, errors: int, warn
     """
     logger = get_logger()
     
-    status = "✅" if errors == 0 else "⚠️" if errors < deals_processed else "❌"
+    status = "OK" if errors == 0 else "WARNING" if errors < deals_processed else "ERROR"
     
     logger.info(f"{status} {module}: {deals_processed} deals, "
                f"{errors} erreurs, {warnings} warnings")
@@ -156,7 +156,7 @@ def log_data_quality(data_source: str, total_rows: int, valid_rows: int,
     logger = get_logger()
     
     quality_pct = (valid_rows / total_rows * 100) if total_rows > 0 else 0
-    status = "✅" if quality_pct >= 95 else "⚠️" if quality_pct >= 80 else "❌"
+    status = "OK" if quality_pct >= 95 else "WARNING" if quality_pct >= 80 else "ERROR"
     
     logger.info(f"{status} {data_source}: {quality_pct:.1f}% qualité "
                f"({valid_rows}/{total_rows} valides)")

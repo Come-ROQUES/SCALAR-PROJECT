@@ -32,7 +32,7 @@ def render_risk_management_tab():
 
 def _render_risk_limits_configuration():
     """Configuration des limites de risque"""
-    st.markdown("### ⚙️ Configuration des Limites")
+    st.markdown("### Configuration des Limites")
     
     # Initialisation des limites par défaut
     _initialize_risk_limits()
@@ -343,7 +343,7 @@ def _create_stress_visualization(impacts, fx_shock, rate_shock, credit_shock):
 def _render_real_time_monitoring():
     """Section monitoring temps réel"""
     st.markdown("---")
-    st.markdown("### 📊 Monitoring Temps Réel")
+    st.markdown("### Monitoring Temps Réel")
     
     df_pnl = st.session_state.get('df_pnl_enhanced')
     

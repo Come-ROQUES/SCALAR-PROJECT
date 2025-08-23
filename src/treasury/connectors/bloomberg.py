@@ -10,7 +10,7 @@ from ..market import MarketDataProvider, MarketData
 
 class BloombergProvider(MarketDataProvider):
     """
-    🔧 CONNECTEUR BLOOMBERG - À PERSONNALISER
+    CONNECTEUR BLOOMBERG - À PERSONNALISER
     
     Nécessite : pip install blpapi
     Configuration : Terminal Bloomberg actif

@@ -32,7 +32,7 @@ def get_ois_rate_now(currency: str,
                      maturity_years: float, 
                      market_data: MarketData = MOCK_MARKET_DATA) -> float:
     """
-    🔧 FONCTION À PERSONNALISER : Calcul du taux OIS actuel
+    FONCTION À PERSONNALISER : Calcul du taux OIS actuel
     
     Actuellement : interpolation linéaire simple sur données mockées
     À remplacer par : connexion Bloomberg, Reuters, ou votre fournisseur de données
@@ -143,7 +143,7 @@ def build_curve_from_instruments(currency: str,
                                 instruments: Dict[str, float],
                                 curve_type: str = "OIS") -> Dict[float, float]:
     """
-    🔧 FONCTION À PERSONNALISER : Construction de courbe depuis instruments
+    FONCTION À PERSONNALISER : Construction de courbe depuis instruments
     
     Args:
         currency: Devise de la courbe
@@ -181,7 +181,7 @@ def build_curve_from_instruments(currency: str,
 
 def refresh_market_data() -> MarketData:
     """
-    🔧 FONCTION À PERSONNALISER : Rafraîchissement des données de marché
+    FONCTION À PERSONNALISER : Rafraîchissement des données de marché
     
     À remplacer par votre logique de récupération en temps réel
     (Bloomberg API, Reuters, base de données, etc.)
@@ -335,7 +335,7 @@ def interpolate_curve(curve: Dict[float, float], target_maturity: float) -> floa
 
 class MarketDataProvider:
     """
-    🔧 CLASSE À PERSONNALISER : Interface pour fournisseurs de données
+    CLASSE À PERSONNALISER : Interface pour fournisseurs de données
     
     À hériter pour créer des connecteurs spécifiques :
     - BloombergProvider

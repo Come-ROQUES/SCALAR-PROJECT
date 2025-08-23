@@ -44,10 +44,10 @@ class RedisCache:
             # Test connexion
             self.redis_client.ping()
             self.is_connected = True
-            logger.info(f"✅ Redis connecté: {host}:{port}")
+            logger.info(f"SUCCESS Redis connecté: {host}:{port}")
             
         except (redis.RedisError, ConnectionError) as e:
-            logger.warning(f"⚠️ Redis non disponible: {e}")
+            logger.warning(f"WARNING Redis non disponible: {e}")
             self.redis_client = None
             self.is_connected = False
     
@@ -121,12 +121,12 @@ class RedisCache:
             result = self.redis_client.setex(redis_key, ttl, serialized)
             
             if result:
-                logger.debug(f"✅ Redis SET: {key} (TTL: {ttl}s)")
+                logger.debug(f"SUCCESS Redis SET: {key} (TTL: {ttl}s)")
             
             return result
             
         except Exception as e:
-            logger.error(f"❌ Redis SET error: {e}")
+            logger.error(f"ERROR Redis SET error: {e}")
             return False
     
     def get(self, key: str) -> Optional[Any]:
@@ -139,15 +139,15 @@ class RedisCache:
             serialized = self.redis_client.get(redis_key)
             
             if serialized is None:
-                logger.debug(f"❌ Redis MISS: {key}")
+                logger.debug(f"ERROR Redis MISS: {key}")
                 return None
             
             data = self._deserialize_data(serialized)
-            logger.debug(f"✅ Redis HIT: {key}")
+            logger.debug(f"SUCCESS Redis HIT: {key}")
             return data
             
         except Exception as e:
-            logger.error(f"❌ Redis GET error: {e}")
+            logger.error(f"ERROR Redis GET error: {e}")
             return None
     
     def delete(self, key: str) -> bool:
@@ -158,11 +158,11 @@ class RedisCache:
         try:
             redis_key = self._make_key(key)
             result = self.redis_client.delete(redis_key)
-            logger.debug(f"🗑️ Redis DELETE: {key}")
+            logger.debug(f"Redis DELETE: {key}")
             return result > 0
             
         except Exception as e:
-            logger.error(f"❌ Redis DELETE error: {e}")
+            logger.error(f"ERROR Redis DELETE error: {e}")
             return False
     
     def exists(self, key: str) -> bool:
@@ -198,13 +198,13 @@ class RedisCache:
             
             if keys:
                 deleted = self.redis_client.delete(*keys)
-                logger.info(f"🗑️ Redis cleared {deleted} keys matching: {pattern}")
+                logger.info(f"Redis cleared {deleted} keys matching: {pattern}")
                 return deleted
             
             return 0
             
         except Exception as e:
-            logger.error(f"❌ Redis clear pattern error: {e}")
+            logger.error(f"ERROR Redis clear pattern error: {e}")
             return 0
     
     def get_cache_stats(self) -> Dict[str, Any]:
@@ -227,7 +227,7 @@ class RedisCache:
             }
             
         except Exception as e:
-            logger.error(f"❌ Redis stats error: {e}")
+            logger.error(f"ERROR Redis stats error: {e}")
             return {'status': 'error', 'error': str(e)}
     
     def _calculate_hit_rate(self, info: dict) -> Optional[float]:
@@ -246,10 +246,10 @@ class RedisCache:
         
         try:
             self.redis_client.flushdb()
-            logger.warning("🚨 Redis DB flushed completely!")
+            logger.warning("CRITICAL Redis DB flushed completely!")
             return True
         except Exception as e:
-            logger.error(f"❌ Redis flush error: {e}")
+            logger.error(f"ERROR Redis flush error: {e}")
             return False
 
 

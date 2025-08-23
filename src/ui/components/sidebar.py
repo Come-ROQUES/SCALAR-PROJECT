@@ -30,7 +30,7 @@ def render_sidebar():
 
 def _render_portfolio_status():
     """Section status du portfolio"""
-    st.markdown("### 📊 Status Portfolio")
+    st.markdown("### Status Portfolio")
     deals = st.session_state.get('generic_deals', [])
     deal_count = len(deals)
     
@@ -60,9 +60,9 @@ def _render_portfolio_status():
 def _render_pnl_configuration():
     """Section configuration PnL"""
     st.markdown("---")
-    st.subheader("⚙️ Configuration PnL")
+    st.subheader("Configuration PnL")
     
-    with st.expander("🔧 Paramètres Calculs"):
+    with st.expander("Paramètres Calculs"):
         config = st.session_state.get('pnl_config', {})
         
         config['calculate_accrued'] = st.checkbox(
@@ -172,20 +172,20 @@ def _render_cache_monitoring():
         col1, col2 = st.columns(2)
         
         with col1:
-            if st.button("🗑️ Vider Cache", help="Supprime tout le cache"):
+            if st.button("Vider Cache", help="Supprime tout le cache"):
                 clear_all_caches()
                 st.success("Cache vidé !")
                 st.rerun()
         
         with col2:
-            if st.button("📊 Stats Détaillées", help="Affiche stats complètes"):
+            if st.button("Stats Détaillées", help="Affiche stats complètes"):
                 st.json(get_cache_status())
 
 
 def _render_real_time_monitoring():
     """Section monitoring temps réel dans la sidebar"""
     st.markdown("---")
-    st.subheader("📊 Monitoring")
+    st.subheader("Monitoring")
     
     df_pnl = st.session_state.get('df_pnl_enhanced')
     
@@ -218,11 +218,11 @@ def _render_compact_utilization_card(df_pnl, rl):
     utilization = (total_notional / global_limit * 100) if global_limit > 0 else 0
     
     if utilization > 80:
-        color, icon = '#ff6b6b', '🚨'
+        color, icon = '#ff6b6b', 'CRITICAL'
     elif utilization > 60:
-        color, icon = '#ffa726', '⚠️'
+        color, icon = '#ffa726', 'WARNING'
     else:
-        color, icon = '#35b779', '✅'
+        color, icon = '#35b779', 'OK'
     
     st.markdown(f"""
     <div style="
@@ -252,11 +252,11 @@ def _render_compact_urgent_deals_card(df_pnl):
             pass
     
     if urgent_count > 5:
-        color, icon = '#ff6b6b', '🚨'
+        color, icon = '#ff6b6b', 'CRITICAL'
     elif urgent_count > 2:
-        color, icon = '#ffa726', '⚠️'
+        color, icon = '#ffa726', 'WARNING'
     else:
-        color, icon = '#35b779', '✅'
+        color, icon = '#35b779', 'OK'
     
     st.markdown(f"""
     <div style="
@@ -284,11 +284,11 @@ def _render_compact_concentration_card(df_pnl, rl):
             max_concentration = (ccy_expo.max() / total_notional * 100)
     
     if max_concentration > rl['max_tenor_concentration'] * 100:
-        color, icon = '#ff6b6b', '🚨'
+        color, icon = '#ff6b6b', 'CRITICAL'
     elif max_concentration > rl['max_tenor_concentration'] * 80:
-        color, icon = '#ffa726', '⚠️'
+        color, icon = '#ffa726', 'WARNING'
     else:
-        color, icon = '#35b779', '✅'
+        color, icon = '#35b779', 'OK'
     
     st.markdown(f"""
     <div style="
@@ -310,11 +310,11 @@ def _render_compact_risk_score_card(df_pnl, rl):
     risk_score = _calculate_compact_risk_score(df_pnl, rl)
     
     if risk_score >= 70:
-        color, icon = '#ff6b6b', '🚨'
+        color, icon = '#ff6b6b', 'CRITICAL'
     elif risk_score >= 40:
-        color, icon = '#ffa726', '⚠️'
+        color, icon = '#ffa726', 'WARNING'
     else:
-        color, icon = '#35b779', '✅'
+        color, icon = '#35b779', 'OK'
     
     st.markdown(f"""
     <div style="

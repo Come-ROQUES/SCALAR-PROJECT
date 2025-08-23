@@ -34,7 +34,7 @@ def render_var_tab():
 
 def _render_var_parameters():
     """Paramètres simulation VaR"""
-    st.markdown("### ⚙️ Paramètres de Simulation")
+    st.markdown("### Paramètres de Simulation")
     
     col1, col2, col3 = st.columns(3)
     
@@ -43,7 +43,7 @@ def _render_var_parameters():
     with col2:
         confidence = st.selectbox("Confiance:", [90, 95, 99], index=1)
     with col3:
-        run_simulation = st.button("🔄 Calculer VaR", type="primary")
+        run_simulation = st.button("Calculer VaR", type="primary")
     
     return n_sims, confidence
 
@@ -51,7 +51,7 @@ def _render_var_parameters():
 def _render_monte_carlo_simulation(df_pnl: pd.DataFrame, n_sims: int, confidence: int):
     """Simulation Monte Carlo et résultats"""
     # Simulation Monte Carlo
-    with st.spinner("🎲 Simulation Monte Carlo..."):
+    with st.spinner("Simulation Monte Carlo..."):
         try:
             sim_results = run_monte_carlo_simulation(
                 convert_generic_to_analytics_format(df_pnl), 
@@ -85,7 +85,7 @@ def _render_monte_carlo_results(sim_results: Dict[str, Any], n_sims: int, confid
 
 def _render_var_metrics(sim_results: Dict[str, Any]):
     """Métriques VaR"""
-    st.markdown("### 📊 Métriques VaR")
+    st.markdown("### Métriques VaR")
     
     col1, col2, col3 = st.columns(3)
     
@@ -100,7 +100,7 @@ def _render_var_metrics(sim_results: Dict[str, Any]):
 
 def _render_simulation_details(sim_results: Dict[str, Any], n_sims: int, confidence: int):
     """Détails de la simulation"""
-    with st.expander("ℹ️ Détails Simulation"):
+    with st.expander("Détails Simulation"):
         st.write(f"**Simulations:** {n_sims:,}")
         st.write(f"**Niveau de confiance:** {confidence}%")
         if 'pairs' in sim_results:
@@ -117,7 +117,7 @@ def _render_simulation_details(sim_results: Dict[str, Any], n_sims: int, confide
 
 def render_advanced_var_analysis():
     """Analyse VaR avancée (optionnelle)"""
-    st.markdown("### 📈 Analyse VaR Avancée")
+    st.markdown("### Analyse VaR Avancée")
     
     df_pnl = st.session_state.get('df_pnl_enhanced')
     
@@ -133,7 +133,7 @@ def render_advanced_var_analysis():
     )
     
     # Paramètres avancés
-    with st.expander("🔧 Paramètres Avancés"):
+    with st.expander("Paramètres Avancés"):
         horizon_days = st.number_input("Horizon (jours):", min_value=1, max_value=250, value=1)
         decay_factor = st.slider("Facteur de décroissance:", 0.8, 1.0, 0.94, 0.01)
         bootstrap_samples = st.number_input("Échantillons bootstrap:", min_value=100, max_value=10000, value=1000)

@@ -27,7 +27,7 @@ def _render_status_metrics():
     
     with col2:
         deal_count = len(st.session_state.get('generic_deals', []))
-        st.caption(f"📊 Deals: {deal_count}")
+        st.caption(f"Deals: {deal_count}")
     
     with col3:
         _render_pnl_status()
@@ -42,28 +42,28 @@ def _render_pnl_status():
     
     if df_pnl is not None and not df_pnl.empty and 'total_pnl' in df_pnl.columns:
         total_pnl = df_pnl['total_pnl'].sum() / 1_000_000
-        st.caption(f"💰 PnL: ${total_pnl:+.1f}M")
+        st.caption(f"PnL: ${total_pnl:+.1f}M")
     else:
-        st.caption("💰 PnL: En attente")
+        st.caption("PnL: En attente")
 
 
 def _render_refresh_button():
     """Bouton de rafraîchissement"""
-    if st.button("🔄 Refresh", type="secondary"):
+    if st.button("Refresh", type="secondary"):
         st.rerun()
 
 
 def _render_footer_actions():
     """Actions supplémentaires dans le footer"""
-    with st.expander("⚙️ Actions Système"):
+    with st.expander("Actions Système"):
         col1, col2, col3 = st.columns(3)
         
         with col1:
-            if st.button("🗑️ Vider Session", help="Supprime toutes les données en session"):
+            if st.button("Vider Session", help="Supprime toutes les données en session"):
                 _clear_session_data()
         
         with col2:
-            if st.button("📊 Statut Détaillé", help="Affiche le statut détaillé de l'application"):
+            if st.button("Statut Détaillé", help="Affiche le statut détaillé de l'application"):
                 _show_detailed_status()
         
         with col3:
@@ -84,7 +84,7 @@ def _clear_session_data():
         if key in st.session_state:
             del st.session_state[key]
     
-    st.success("✅ Session vidée avec succès")
+    st.success("SUCCESS Session vidée avec succès")
     st.rerun()
 
 
@@ -92,16 +92,16 @@ def _show_detailed_status():
     """Affiche le statut détaillé de l'application"""
     status_info = _get_application_status()
     
-    st.markdown("### 📋 Statut Détaillé de l'Application")
+    st.markdown("### Statut Détaillé de l'Application")
     
     # Statut général
     col1, col2 = st.columns(2)
     
     with col1:
-        st.markdown("**📊 Données:**")
+        st.markdown("**Données:**")
         st.write(f"• Deals en mémoire: {status_info['deals_count']}")
-        st.write(f"• PnL calculé: {'✅' if status_info['pnl_available'] else '❌'}")
-        st.write(f"• Configuration PnL: {'✅' if status_info['config_valid'] else '❌'}")
+        st.write(f"• PnL calculé: {'OK' if status_info['pnl_available'] else 'ERROR'}")
+        st.write(f"• Configuration PnL: {'OK' if status_info['config_valid'] else 'ERROR'}")
         
     with col2:
         st.markdown("**💾 Session:**")
@@ -110,7 +110,7 @@ def _show_detailed_status():
         st.write(f"• Modules chargés: {status_info['modules_loaded']}")
     
     # Détails techniques
-    if st.checkbox("🔧 Détails Techniques"):
+    if st.checkbox("Détails Techniques"):
         st.json(status_info['technical_details'])
 
 
@@ -294,15 +294,15 @@ def render_system_health_indicator():
     # Couleur selon le statut
     if health_status['score'] >= 80:
         color = '#26de81'  # Vert
-        icon = '✅'
+        icon = 'OK'
         status_text = 'EXCELLENT'
     elif health_status['score'] >= 60:
         color = '#ffa726'  # Orange
-        icon = '⚠️'
+        icon = 'WARNING'
         status_text = 'ATTENTION'
     else:
         color = '#ff6b6b'  # Rouge
-        icon = '🚨'
+        icon = 'CRITICAL'
         status_text = 'CRITIQUE'
     
     # Affichage compact dans le footer

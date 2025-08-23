@@ -21,7 +21,7 @@ except ImportError:
 
 def render_pnl_tab():
     """Onglet de calcul et affichage PnL avec cache intelligent"""
-    st.subheader("💰 Calculs PnL Modulaires")
+    st.subheader("Calculs PnL Modulaires")
     
     deals = st.session_state.get('generic_deals', [])
     
@@ -40,7 +40,7 @@ def _render_pnl_controls():
     col_ctrl1, col_ctrl2, col_ctrl3 = st.columns(3)
     
     with col_ctrl1:
-        if st.button("🔄 Recalculer PnL", type="primary", use_container_width=True):
+        if st.button("Recalculer PnL", type="primary", use_container_width=True):
             _recalculate_pnl()
     
     with col_ctrl2:
@@ -48,7 +48,7 @@ def _render_pnl_controls():
             _run_stress_test()
     
     with col_ctrl3:
-        if st.button("🔄 Reset Config", use_container_width=True):
+        if st.button("Reset Config", use_container_width=True):
             _reset_pnl_config()
     
     st.markdown("---")
@@ -132,12 +132,12 @@ def _render_pnl_metrics(df_pnl: pd.DataFrame):
     col2.metric("MTM (M)", f"{summary.get('mtm_pnl_m', 0):+.2f}")
     col3.metric("Rate (M)", f"{summary.get('rate_pnl_m', 0):+.2f}")
     col4.metric("Liquidity (M)", f"{summary.get('liquidity_pnl_m', 0):+.2f}")
-    col5.metric("🎯 TOTAL (M)", f"{summary.get('total_pnl_m', 0):+.2f}")
+    col5.metric("TOTAL (M)", f"{summary.get('total_pnl_m', 0):+.2f}")
 
 
 def _render_pnl_charts(df_pnl: pd.DataFrame):
     """Affiche les graphiques PnL"""
-    st.markdown("### 📊 Visualisations PnL")
+    st.markdown("### Visualisations PnL")
     
     try:
         # Import local pour éviter circularité
@@ -159,7 +159,7 @@ def _render_pnl_charts(df_pnl: pd.DataFrame):
 def _render_pnl_actions(df_pnl: pd.DataFrame):
     """Boutons d'action pour le PnL"""
     st.markdown("---")
-    st.markdown("### 📋 Actions et Détails")
+    st.markdown("### Actions et Détails")
     
     # Import local pour éviter circularité
     from treasury.pnl import get_pnl_summary
@@ -198,7 +198,7 @@ def _export_pnl_to_excel(df_pnl: pd.DataFrame):
 
 def _render_pnl_details(df_pnl: pd.DataFrame):
     """Table détaillée des résultats PnL"""
-    with st.expander("📋 Détail par Deal"):
+    with st.expander("Détail par Deal"):
         # Colonnes d'affichage
         display_cols = [
             'deal_id', 'product', 'amount', 'time_to_maturity_years',

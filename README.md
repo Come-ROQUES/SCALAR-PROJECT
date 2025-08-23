@@ -14,7 +14,7 @@ Application web moderne pour l'analyse de PnL, gestion des risques et monitoring
 
 ---
 
-## 🏗️ Architecture Technique Complète
+## Architecture Technique Complète
 
 ### Structure des Dossiers Finale
 ```
@@ -96,10 +96,10 @@ pwd  # doit être: /Users/comeroques/Projects/IDOITFORFUN/SCALAR-PROJECT
 ```
 
 ### Performances Obtenues
-- ✅ **PnL Calculs** : 2-10x plus rapide avec cache
-- ✅ **Cache Hit Rate** : 80%+ typique
-- ✅ **Temps économisé** : Plusieurs secondes par session
-- ✅ **Memory footprint** : Optimisé JSON serialization
+- **PnL Calculs** : 2-10x plus rapide avec cache
+- **Cache Hit Rate** : 80%+ typique
+- **Temps économisé** : Plusieurs secondes par session
+- **Memory footprint** : Optimisé JSON serialization
 
 ### Utilisation Cache
 ```python
@@ -135,17 +135,17 @@ VIRIDIS_COLORS = {
 ```
 Status Portfolio
 ├── Badges des deals par type
-⚙Configuration PnL  
+Configuration PnL  
 ├── Paramètres de calcul
 ⚡ Cache & Performance (NOUVEAU)
 ├── Cache Hit Rate: XX%
 ├── ⏱Temps économisé: X.Xs
 ├── 🛠Actions Cache (Vider/Stats)
 Monitoring
-├── 🚨/⚠️/✅ Utilisation: XX%
-├── 🚨/⚠️/✅ Échéances ≤7j: X
-├── 🚨/⚠️/✅ Concentration: XX%
-├── 🚨/⚠️/✅ Score Risque: XX/100
+├── STATUS-Utilisation: XX%
+├── STATUS-Échéances ≤7j: X
+├── STATUS-Concentration: XX%
+├── STATUS-Score Risque: XX/100
 Mode Debug
 ├── Logs récents
 └── Stats cache détaillées
@@ -155,20 +155,20 @@ Mode Debug
 
 ## Fonctionnalités Métier (Mises à Jour)
 
-### 1. **Import de Données** (`import_tab.py`) ✅
-- ✅ **Template Excel** intégré en haut de page
-- ✅ **Validation avancée** avec gestion erreurs robuste
-- ✅ **Nettoyage automatique** des fichiers
-- ✅ **Génération d'IDs** manquants
-- ✅ **Interface modernisée** avec expandeur format
+### 1. **Import de Données** (`import_tab.py`) 
+- **Template Excel** intégré en haut de page
+- **Validation avancée** avec gestion erreurs robuste
+- **Nettoyage automatique** des fichiers
+- **Génération d'IDs** manquants
+- **Interface modernisée** avec expandeur format
 
-### 2. **Calculs PnL** (`pnl_tab.py`) ✅ **+ Cache**
-- ✅ **Cache intelligent** : Calculs 2-10x plus rapides
-- ✅ **4 composantes** : Accrued, MTM, Rate, Liquidity PnL
-- ✅ **Configuration modulaire** via sidebar
-- ✅ **Stress tests** rapides (+50bp)
-- ✅ **Graphiques interactifs** : Breakdown + Waterfall
-- ✅ **Feedback performance** temps réel en mode debug
+### 2. **Calculs PnL** (`pnl_tab.py`) **+ Cache**
+- **Cache intelligent** : Calculs 2-10x plus rapides
+- **4 composantes** : Accrued, MTM, Rate, Liquidity PnL
+- **Configuration modulaire** via sidebar
+- **Stress tests** rapides (+50bp)
+- **Graphiques interactifs** : Breakdown + Waterfall
+- **Feedback performance** temps réel en mode debug
 
 **Performance PnL V2.1 :**
 ```
@@ -177,21 +177,21 @@ Calculs suivants : ~0.1-0.5s (cache hit)
 Amélioration : 5-20x plus rapide
 ```
 
-### 3. **Gestion des Risques** (`risk_tab.py`) ✅
-- ✅ **Configuration limites** : Notionnel/Paire, Concentration, VaR
-- ✅ **Détection violations** automatique
-- ✅ **5 scénarios prédéfinis** :
+### 3. **Gestion des Risques** (`risk_tab.py`) 
+- **Configuration limites** : Notionnel/Paire, Concentration, VaR
+- **Détection violations** automatique
+- **5 scénarios prédéfinis** :
   1. Crise Systémique : FX -15%, Taux +200bp, Crédit +200bp
   2. Resserrement Fed : FX -5%, Taux +150bp, Crédit +50bp
   3. Crise Émergente : FX -8%, Taux +50bp, Crédit +150bp
   4. Volatilité Extrême : FX -12%, Taux +100bp, Crédit +100bp
   5. Carry Trade Unwind : FX -6%, Taux -100bp, Crédit +50bp
 
-### 4. **Monitoring Temps Réel** (`sidebar.py`) ✅ **+ Cache Stats**
-- ✅ **4 indicateurs risque** toujours visibles
-- ✅ **Monitoring cache** avec hit rate et temps économisé
-- ✅ **Actions cache** : Vider, Stats détaillées
-- ✅ **Mode debug** intégré avec logs
+### 4. **Monitoring Temps Réel** (`sidebar.py`) **+ Cache Stats**
+- **4 indicateurs risque** toujours visibles
+- **Monitoring cache** avec hit rate et temps économisé
+- **Actions cache** : Vider, Stats détaillées
+- **Mode debug** intégré avec logs
 
 ---
 
@@ -199,7 +199,7 @@ Amélioration : 5-20x plus rapide
 
 ### Tests Opérationnels
 ```bash
-# Tests Risk Management (8/8 ✅)
+# Tests Risk Management (8/8 )
 pytest tests/test_risk.py -v
 
 # Tests Cache Performance  
@@ -213,24 +213,24 @@ pytest tests/ -m "not slow" -v
 ```
 
 ### Couverture Tests V2.1
-- ✅ **test_risk.py** : 8 tests (concentration, Monte Carlo, limites)
-- ✅ **test_models.py** : Validation Pydantic, imports Treasury
-- ✅ **test_pnl.py** : Calculs PnL basiques
-- ✅ **test_cache.py** : Performance cache, sérialisation
-- ✅ **pytest.ini** : Configuration markers (slow, integration, unit)
+- **test_risk.py** : 8 tests (concentration, Monte Carlo, limites)
+- **test_models.py** : Validation Pydantic, imports Treasury
+- **test_pnl.py** : Calculs PnL basiques
+- **test_cache.py** : Performance cache, sérialisation
+- **pytest.ini** : Configuration markers (slow, integration, unit)
 
 ### Résultats Tests Actuels
 ```
 ======================== 8 passed, 0 failed ========================
 ⚡ Cache améliore vitesse de 5.2x
-✅ Risk imports OK
-✅ Concentration max: 83.3%
-✅ Impact FX: -3.0M, Rate: +2.1M, Credit: +0.1M
+Risk imports OK
+Concentration max: 83.3%
+Impact FX: -3.0M, Rate: +2.1M, Credit: +0.1M
 ```
 
 ---
 
-## ⚙Configuration Technique V2.1
+## Configuration Technique V2.1
 
 ### Session State Structure (Mise à Jour)
 ```python
@@ -274,10 +274,10 @@ st.session_state = {
 
 ## Issues Résolues V2.1
 
-### Problèmes Pytest ✅
+### Problèmes Pytest 
 ```bash
-# ❌ ERREUR: pytest.mark.slow unknown marker
-# ✅ SOLUTION: pytest.ini avec markers configuration
+# ERROR ERREUR: pytest.mark.slow unknown marker
+# SOLUTION: pytest.ini avec markers configuration
 
 [tool:pytest]
 markers =
@@ -286,26 +286,26 @@ markers =
     unit: marks tests as unit tests
 ```
 
-### Performance Plotly ✅
+### Performance Plotly 
 ```python
-# ❌ ERREUR: sizemax property invalid
-# ✅ SOLUTION: Manual size normalization
+# ERROR ERREUR: sizemax property invalid
+# SOLUTION: Manual size normalization
 abs_values = np.abs(values)
 max_val = abs_values.max() if abs_values.max() > 0 else 1
 sizes = 5 + (abs_values / max_val) * 35  # Entre 5-40px
 ```
 
-### Imports Relatifs ✅
+### Imports Relatifs 
 ```python
-# ❌ ERREUR: attempted relative import with no known parent package
-# ✅ SOLUTION: Absolute imports + path management
+# ERROR ERREUR: attempted relative import with no known parent package
+# SOLUTION: Absolute imports + path management
 from ui.components.sidebar import render_sidebar  # Not: from .components
 ```
 
-### Cache Performance ✅
+### Cache Performance 
 ```python
-# ❌ PROBLÈME: Calculs PnL lents (2-5s)
-# ✅ SOLUTION: Cache intelligent avec JSON serialization
+# ERROR PROBLÈME: Calculs PnL lents (2-5s)
+# SOLUTION: Cache intelligent avec JSON serialization
 # Résultat: 5-20x amélioration performance
 ```
 
@@ -325,7 +325,7 @@ Sidebar Config → Onglet PnL → Recalculer → ⚡ Cache Hit → Résultats In
 
 ### 3. **Monitoring Continu**
 ```
-Sidebar Cache: Hit Rate 85% → Monitoring: Score Risque 25/100 → Alertes: ✅ OK
+Sidebar Cache: Hit Rate 85% → Monitoring: Score Risque 25/100 → Alertes: OK
 ```
 
 ### 4. **Analyse & Tests**
@@ -371,10 +371,10 @@ Typical Performance:
 ```
 
 ### Optimisations Techniques
-- ✅ **JSON Serialization** pour cache Streamlit
-- ✅ **Lazy loading** imports lourds
-- ✅ **Date conversion** optimisée
-- ✅ **Error handling** robuste avec fallbacks
+- **JSON Serialization** pour cache Streamlit
+- **Lazy loading** imports lourds
+- **Date conversion** optimisée
+- **Error handling** robuste avec fallbacks
 
 ---
 
@@ -382,10 +382,10 @@ Typical Performance:
 
 ### 1. **Utilisation Cache (IMPORTANT)**
 ```python
-# ❌ NE PAS FAIRE:
+# ERROR NE PAS FAIRE:
 df_pnl = compute_enhanced_pnl_vectorized(deals, config)
 
-# ✅ TOUJOURS FAIRE:
+# TOUJOURS FAIRE:
 from treasury.cache import compute_pnl_with_cache
 df_pnl = compute_pnl_with_cache(deals, config)
 ```
@@ -451,7 +451,7 @@ pytest tests/test_risk.py -v        # Risk management
 **Projet** : SCALAR-PROJECT  
 **Path** : `/Users/comeroques/Projects/IDOITFORFUN/SCALAR-PROJECT`  
 **Version** : Treasury Dashboard v2.1 - Cache Intelligent  
-**Status** : Production Ready avec Tests ✅  
+**Status** : Production Ready avec Tests  
 
 ### Dépendances V2.1
 ```
