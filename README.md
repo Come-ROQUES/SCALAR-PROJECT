@@ -1,14 +1,14 @@
 
 # SCALAR - Advanced Treasury Dashboard
 
-## 🔥 Version 2.2 - Clean & Professional
+## Version 2.2 - Clean & Professional
 
 **Dernières améliorations (Août 2025):**
-- ✅ **Interface professionnelle** : Suppression de tous les emojis 
-- ✅ **Code épuré** : Suppression des connecteurs inutiles (Bloomberg)
-- ✅ **Architecture simplifiée** : Nettoyage des dépendances (-75% de complexité)
-- ✅ **CI/CD optimisé** : Pipeline simplifié (390 → 50 lignes)
-- ✅ **Performance** : Code plus focalisé et maintenable
+- **Interface professionnelle** : Suppression de tous les emojis 
+- **Code épuré** : Suppression des connecteurs inutiles (Bloomberg)
+- **Architecture simplifiée** : Nettoyage des dépendances (-75% de complexité)
+- **CI/CD optimisé** : Pipeline simplifié (390 → 50 lignes)
+- **Performance** : Code plus focalisé et maintenable
 
 ---
 
@@ -72,7 +72,7 @@ SCALAR-PROJECT/
 └── README.md                       # Documentation
 ```
 
-## 🚀 Installation & Lancement
+## Installation & Lancement
 
 ### Prérequis
 - Python 3.11+ 
@@ -195,10 +195,10 @@ Status Portfolio
 ├── Badges des deals par type
 Configuration PnL  
 ├── Paramètres de calcul
-⚡ Cache & Performance (NOUVEAU)
+Cache & Performance (NOUVEAU)
 ├── Cache Hit Rate: XX%
-├── ⏱Temps économisé: X.Xs
-├── 🛠Actions Cache (Vider/Stats)
+├── Temps économisé: X.Xs
+├── Actions Cache (Vider/Stats)
 Monitoring
 ├── STATUS-Utilisation: XX%
 ├── STATUS-Échéances ≤7j: X
@@ -230,7 +230,7 @@ Mode Debug
 
 **Performance PnL V2.1 :**
 ```
-⚡ Premier calcul : ~2-5s (cache miss)
+Premier calcul : ~2-5s (cache miss)
 Calculs suivants : ~0.1-0.5s (cache hit)  
 Amélioration : 5-20x plus rapide
 ```
@@ -280,7 +280,7 @@ pytest tests/ -m "not slow" -v
 ### Résultats Tests Actuels
 ```
 ======================== 8 passed, 0 failed ========================
-⚡ Cache améliore vitesse de 5.2x
+Cache améliore vitesse de 5.2x
 Risk imports OK
 Concentration max: 83.3%
 Impact FX: -3.0M, Rate: +2.1M, Credit: +0.1M
@@ -369,7 +369,7 @@ from ui.components.sidebar import render_sidebar  # Not: from .components
 
 ---
 
-## 🔄 Workflow Utilisateur V2.1
+## Workflow Utilisateur V2.1
 
 ### 1. **Import & Setup**
 ```
@@ -378,7 +378,7 @@ Onglet Import → Template Download → Remplir Excel → Upload → Validation
 
 ### 2. **Calcul PnL Optimisé** 
 ```
-Sidebar Config → Onglet PnL → Recalculer → ⚡ Cache Hit → Résultats Instantanés
+Sidebar Config → Onglet PnL → Recalculer → Cache Hit → Résultats Instantanés
 ```
 
 ### 3. **Monitoring Continu**
@@ -417,7 +417,7 @@ Performance → VaR → Risk → Stress Tests → Scénarios → Impact Visualiz
 
 ---
 
-## 🛠Améliorations Performance V2.1
+## Améliorations Performance V2.1
 
 ### Cache Hit Rates Observés
 ```
@@ -525,9 +525,9 @@ pytest-cov >= 4.0.0      # NOUVEAU
 
 ### Performance Benchmarks
 ```
-💻 Environment: MacBook Pro M1
-📊 Typical Dataset: 50-200 deals
-⚡ Cache Performance:
+Environment: MacBook Pro M1
+Typical Dataset: 50-200 deals
+Cache Performance:
   ├── First calculation: 2.1s
   ├── Cached calculation: 0.2s  
   ├── Improvement: 10.5x
