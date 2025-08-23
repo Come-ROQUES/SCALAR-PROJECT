@@ -1,12 +1,23 @@
 
-# SCALAR - Contexte Projet Complet V2.1
+# SCALAR - Advanced Treasury Dashboard
+
+## 🔥 Version 2.2 - Clean & Professional
+
+**Dernières améliorations (Août 2025):**
+- ✅ **Interface professionnelle** : Suppression de tous les emojis 
+- ✅ **Code épuré** : Suppression des connecteurs inutiles (Bloomberg)
+- ✅ **Architecture simplifiée** : Nettoyage des dépendances (-75% de complexité)
+- ✅ **CI/CD optimisé** : Pipeline simplifié (390 → 50 lignes)
+- ✅ **Performance** : Code plus focalisé et maintenable
+
+---
 
 ## Vue d'Ensemble
 
 **Nom du Projet** : SCALAR
 **Type** : Application Streamlit modulaire pour gestion de portefeuille treasury  
-**Version Actuelle** : 2.1 - Architecture Modulaire + Cache Intelligent  
-**Dernière MAJ** : 2025-08-17  
+**Version Actuelle** : 2.2 - Clean & Professional  
+**Dernière MAJ** : 2025-08-23  
 **Développeur Principal** : Côme ROQUES  
 
 ### Objectif
@@ -16,38 +27,85 @@ Application web moderne pour l'analyse de PnL, gestion des risques et monitoring
 
 ## Architecture Technique Complète
 
-### Structure des Dossiers Finale
+### Structure des Dossiers (Nettoyée V2.2)
 ```
 SCALAR-PROJECT/
 ├── src/
-│   ├── treasury/                    
-│   │   ├── config.py              
-│   │   ├── session.py              
-│   │   ├── models.py               
-│   │   ├── cache.py                
-│   │   ├── pnl.py                  
-│   │   ├── market.py               
-│   │   ├── risk.py                 
-│   │   ├── analytics.py            
-│   │   ├── visuals.py              
-│   │   ├── logging_config.py       
+│   ├── treasury/                    # Core business logic
+│   │   ├── config.py               # Configuration & UI theming
+│   │   ├── session.py              # State management  
+│   │   ├── models.py               # Data models & validation
+│   │   ├── cache.py                # Intelligent caching system
+│   │   ├── pnl.py                  # P&L calculations
+│   │   ├── market.py               # Market data providers
+│   │   ├── risk.py                 # Risk analytics & VaR
+│   │   ├── analytics.py            # Performance analytics
+│   │   ├── visuals.py              # Chart generation
+│   │   ├── logging_config.py       # Logging configuration
+│   │   ├── assets.py               # Asset management
+│   │   ├── cache/
+│   │   │   └── redis_cache.py      # Redis integration
+│   │   ├── monitoring/
+│   │   │   └── alerts.py           # Risk monitoring
 │   │   ├── utils/
-│   │   │   └── dates.py            
+│   │   │   └── dates.py            # Date utilities
 │   │   └── io/
-│   │       └── excel.py           
+│   │       └── excel.py            # Excel import/export
 │   │
-│   └── ui/                         
-│       ├── __init__.py
-│       ├── app.py                  
+│   └── ui/                         # User interface
+│       ├── app.py                  # Main application
 │       └── components/
-│           ├── __init__.py
-│           ├── sidebar.py          
-│           ├── footer.py           
+│           ├── sidebar.py          # Sidebar controls
+│           ├── footer.py           # Status footer
 │           └── tabs/
-│               ├── __init__.py
-│               ├── import_tab.py   
-│               ├── pnl_tab.py      
-│               ├── visuals_tab.py  
+│               ├── import_tab.py   # Data import
+│               ├── pnl_tab.py      # P&L analysis
+│               ├── visuals_tab.py  # 3D visualizations
+│               ├── performance_tab.py # Performance tracking
+│               ├── var_tab.py      # VaR calculations
+│               └── risk_tab.py     # Risk management
+│
+├── tests/                          # Unit tests
+├── static/                         # Static assets
+├── .github/workflows/              # CI/CD pipeline
+├── requirements.txt                # Core dependencies
+└── README.md                       # Documentation
+```
+
+## 🚀 Installation & Lancement
+
+### Prérequis
+- Python 3.11+ 
+- Git
+
+### Installation Rapide
+```bash
+# 1. Cloner le repository
+git clone https://github.com/Come-ROQUES/SCALAR-PROJECT.git
+cd SCALAR-PROJECT
+
+# 2. Installer les dépendances (core seulement)
+pip install -r requirements.txt
+
+# 3. Lancer l'application
+cd src && streamlit run ui/app.py
+```
+
+### Alternative avec environnement virtuel
+```bash
+# Créer un environnement virtuel
+python -m venv venv
+source venv/bin/activate  # Linux/Mac
+# ou venv\Scripts\activate  # Windows
+
+# Installer et lancer
+pip install -r requirements.txt
+cd src && streamlit run ui/app.py
+```
+
+L'application sera accessible sur `http://localhost:8501`
+
+---
 │               ├── var_tab.py      
 │               ├── performance_tab.py
 │               └── risk_tab.py     
