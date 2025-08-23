@@ -14,7 +14,7 @@ Application web moderne pour l'analyse de PnL, gestion des risques et monitoring
 
 ---
 
-## 🏗Architecture Technique Complète
+## 🏗️ Architecture Technique Complète
 
 ### Structure des Dossiers Finale
 ```
@@ -73,10 +73,13 @@ cd src && streamlit run ui/app.py
 # Alternative avec PYTHONPATH
 export PYTHONPATH=$PWD/src && streamlit run src/ui/app.py
 
+<<<<<<< HEAD
 # Vérification : depuis SCALAR-PROJECT/
 pwd  # doit être: /Users/comeroques/Projects/IDOITFORFUN/SCALAR-PROJECT
 ```
 
+=======
+>>>>>>> 225442aa6c2a64264d68e5cb82a1dfb835ec1971
 ---
 
 ## NOUVEAUTÉ V2.1 : Système de Cache Intelligent
@@ -475,4 +478,8 @@ pytest-cov >= 4.0.0      # NOUVEAU
 ---
 
 
+<<<<<<< HEAD
 **Dernière mise à jour** : 2025-08-17 - Cache intelligent intégré, tests opérationnels, performance optimisée
+=======
+**Dernière mise à jour** : 2025-08-17 - Cache intelligent intégré, tests opérationnels, performance optimisée
+>>>>>>> 225442aa6c2a64264d68e5cb82a1dfb835ec1971
