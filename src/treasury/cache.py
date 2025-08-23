@@ -226,7 +226,7 @@ def compute_pnl_with_cache(deals: List, config: Dict[str, Any]) -> pd.DataFrame:
         
         # Afficher info performance si en mode debug
         if st.session_state.get('debug_mode', False):
-            st.sidebar.success(f"⚡ PnL calculé en {execution_time:.2f}s (cache: ✅)")
+            st.sidebar.success(f"PnL calculé en {execution_time:.2f}s (cache: ACTIF)")
         
         return df_pnl
         

@@ -20,7 +20,7 @@ except ImportError:
 
 def render_var_tab():
     """Onglet Monte Carlo et VaR"""
-    st.subheader("🎲 Monte Carlo & VaR")
+    st.subheader("Monte Carlo & VaR")
     
     df_pnl = st.session_state.get('df_pnl_enhanced')
     

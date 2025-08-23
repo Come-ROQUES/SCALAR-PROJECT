@@ -121,7 +121,7 @@ class AlertManager:
             self.active_alerts.append(alert)
             self._notify_handlers(alert)
             self._save_to_session()
-            logger.warning(f"🚨 ALERTE {level.value.upper()}: {title}")
+            logger.warning(f"ALERTE {level.value.upper()}: {title}")
         
         return alert
     
@@ -229,7 +229,7 @@ class AlertManager:
     
     def run_full_monitoring(self, df_pnl: pd.DataFrame, var_results: Dict = None):
         """Lance tous les contrôles de monitoring"""
-        logger.info("🔍 Lancement monitoring complet...")
+        logger.info("Lancement monitoring complet...")
         
         # Qualité des données
         self.check_data_quality(df_pnl)
@@ -246,7 +246,7 @@ class AlertManager:
             var_99 = var_results.get('var_99', 0)
             self.check_var_limits(var_95, var_99)
         
-        logger.info(f"✅ Monitoring terminé - {len(self.active_alerts)} alertes actives")
+        logger.info(f"Monitoring terminé - {len(self.active_alerts)} alertes actives")
     
     def get_dashboard_summary(self) -> Dict:
         """Résumé pour dashboard"""
@@ -300,13 +300,13 @@ def streamlit_notification_handler(alert: Alert):
     """Handler pour notifications Streamlit"""
     if 'st' in globals():
         icon_map = {
-            AlertLevel.INFO: "ℹ️",
-            AlertLevel.WARNING: "⚠️", 
-            AlertLevel.CRITICAL: "🚨",
-            AlertLevel.FATAL: "💥"
+            AlertLevel.INFO: "INFO",
+            AlertLevel.WARNING: "WARNING", 
+            AlertLevel.CRITICAL: "CRITICAL",
+            AlertLevel.FATAL: "FATAL"
         }
         
-        icon = icon_map.get(alert.level, "📢")
+        icon = icon_map.get(alert.level, "ALERT")
         
         if alert.level in [AlertLevel.CRITICAL, AlertLevel.FATAL]:
             st.error(f"{icon} **{alert.title}**: {alert.message}")

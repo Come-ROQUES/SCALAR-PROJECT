@@ -16,7 +16,7 @@ def run_monte_carlo_simulation(df_analytics: pd.DataFrame,
                                n_simulations: int = 50_000, 
                                seed: int = 123) -> Dict:
     """
-    🔧 FONCTION À PERSONNALISER : Simulation Monte Carlo avec corrélations réalistes
+    FONCTION À PERSONNALISER : Simulation Monte Carlo avec corrélations réalistes
     
     Args:
         df_analytics: DataFrame format analytics
@@ -181,7 +181,7 @@ def create_monte_carlo_distribution(sim_results: Dict) -> go.Figure:
             )
         
         fig.update_layout(
-            title='🎲 Distribution Monte Carlo P&L',
+            title='Distribution Monte Carlo P&L',
             xaxis_title='P&L (M USD)',
             yaxis_title='Fréquence',
             height=420,

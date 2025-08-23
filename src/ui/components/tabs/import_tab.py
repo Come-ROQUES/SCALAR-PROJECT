@@ -23,7 +23,7 @@ except ImportError:
 
 def render_import_tab():
     """Onglet d'import des données"""
-    st.subheader("📋 Import Excel Format Générique")
+    st.subheader("Import Excel Format Générique")
     
     _render_template_section()
     _render_format_info()
@@ -38,7 +38,7 @@ def _render_template_section():
     
     with col1:
         st.info("""
-        **📋 Téléchargez le template Excel** pour importer vos deals avec la bonne structure.
+        **Téléchargez le template Excel** pour importer vos deals avec la bonne structure.
         Le template contient les colonnes requises et des exemples de données.
         """)
     
@@ -46,7 +46,7 @@ def _render_template_section():
         # Template download
         template_data = build_template_generic()
         st.download_button(
-            label="📋 Télécharger Template",
+            label="Télécharger Template",
             data=template_data,
             file_name=f"treasury_template_{datetime.now().strftime('%Y%m%d')}.xlsx",
             mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
@@ -60,9 +60,9 @@ def _render_template_section():
 
 def _render_format_info():
     """Information sur le format attendu"""
-    with st.expander("ℹ️ Format Attendu - Cliquez pour voir les détails"):
+    with st.expander("Format Attendu - Cliquez pour voir les détails"):
         st.markdown("""
-        **📋 Structure requise :**  
+        **Structure requise :**  
         - **Feuille** : `DEALS`
         - **Colonnes obligatoires** :
           - `comment` : Description du deal
@@ -78,7 +78,7 @@ def _render_format_info():
           - `ois_equivalent_rate` : Taux OIS équivalent
           - `trader_id` : Identifiant du trader (optionnel)
         
-        **💡 Conseils :**
+        **Conseils :**
         - Utilisez le template pour éviter les erreurs de format
         - Les dates doivent être au format YYYY-MM-DD
         - Les taux sont en décimal (0.05 pour 5%)
@@ -109,19 +109,19 @@ def _render_upload_form():
                                           help="Génère automatiquement les deal_id manquants")
         
         # Bouton submit obligatoire
-        submitted = st.form_submit_button("🔍 Importer & Valider", type="primary")
+        submitted = st.form_submit_button("Importer & Valider", type="primary")
         
         # Traitement seulement si formulaire soumis ET fichier présent
         if submitted:
             if uploaded_file is not None:
                 _process_uploaded_file(processor, uploaded_file, auto_clean, auto_generate_ids)
             else:
-                st.warning("⚠️ Veuillez sélectionner un fichier Excel à importer")
+                st.warning("Veuillez sélectionner un fichier Excel à importer")
 
 
 def _process_uploaded_file(processor: ExcelProcessor, uploaded_file, auto_clean: bool, auto_generate_ids: bool):
     """Traite le fichier uploadé"""
-    with st.spinner("🔍 Traitement en cours..."):
+    with st.spinner("Traitement en cours..."):
         start_time = time.time()
         
         try:
@@ -140,14 +140,14 @@ def _process_uploaded_file(processor: ExcelProcessor, uploaded_file, auto_clean:
             _display_import_results(deals, warnings, metadata, processing_time)
             
         except Exception as e:
-            st.error(f"❌ Erreur lors du traitement: {e}")
+            st.error(f"ERROR Erreur lors du traitement: {e}")
             logger.error(f"Erreur import: {e}")
 
 
 def _display_import_results(deals: List[GenericDeal], warnings: List[str], metadata: Dict[str, Any], processing_time: float):
     """Affiche les résultats de l'import"""
     if deals:
-        st.success(f"✅ {len(deals)} deals importés avec succès en {processing_time:.1f}s")
+        st.success(f"SUCCESS {len(deals)} deals importés avec succès en {processing_time:.1f}s")
         
         # Preview des données
         _display_deals_preview(deals)
@@ -155,7 +155,7 @@ def _display_import_results(deals: List[GenericDeal], warnings: List[str], metad
         # Métadonnées
         _display_import_metadata(metadata)
     else:
-        st.error("❌ Aucun deal valide importé")
+        st.error("ERROR Aucun deal valide importé")
     
     # Warnings
     _display_import_warnings(warnings)
@@ -177,7 +177,7 @@ def _display_deals_preview(deals: List[GenericDeal]):
 
 def _display_import_metadata(metadata: Dict[str, Any]):
     """Affiche les métadonnées de l'import"""
-    with st.expander("📊 Métadonnées Import"):
+    with st.expander("Métadonnées Import"):
         col1, col2, col3 = st.columns(3)
         col1.metric("Lignes originales", metadata.get('original_rows', 0))
         col2.metric("Deals valides", metadata.get('valid_deals', 0))
@@ -187,7 +187,7 @@ def _display_import_metadata(metadata: Dict[str, Any]):
 def _display_import_warnings(warnings: List[str]):
     """Affiche les warnings de l'import"""
     if warnings:
-        with st.expander(f"⚠️ Warnings ({len(warnings)})"):
+        with st.expander(f"Warnings ({len(warnings)})"):
             for warning in warnings[:20]:  # Limite affichage à 20
                 st.warning(warning)
             if len(warnings) > 20:

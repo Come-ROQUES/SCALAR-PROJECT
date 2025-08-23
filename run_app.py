@@ -24,9 +24,9 @@ def main() -> int:
     # 2) Vérifs de base
     problems = []
     if not src_path.is_dir():
-        problems.append(f"❌ Dossier src introuvable: {src_path}")
+        problems.append(f"ERROR Dossier src introuvable: {src_path}")
     if not app_path.is_file():
-        problems.append(f"❌ app.py introuvable: {app_path}")
+        problems.append(f"ERROR app.py introuvable: {app_path}")
     if problems:
         print("\n".join(problems))
         return 1
@@ -54,7 +54,7 @@ def main() -> int:
         )
 
     # 6) Affiche un diagnostic utile (pour éviter les doutes)
-    print("🔧 DIAGNOSTIC LANCEMENT")
+    print("DIAGNOSTIC LANCEMENT")
     print(f"• Python        : {sys.executable}")
     print(f"• CWD           : {Path.cwd()}")
     print(f"• Project root  : {project_root}")

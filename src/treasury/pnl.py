@@ -30,7 +30,7 @@ def calculate_accrued_pnl(deal: GenericDeal,
                          ois_rate_now: float, 
                          val_date: pd.Timestamp = VAL_DATE) -> float:
     """
-    🔧 FONCTION À PERSONNALISER : Calcul du PnL d'accrued
+    FONCTION À PERSONNALISER : Calcul du PnL d'accrued
     
     Args:
         deal: Deal à valoriser
@@ -65,7 +65,7 @@ def calculate_mtm_pnl(deal: GenericDeal,
                       ois_rate_now: float, 
                       val_date: pd.Timestamp = VAL_DATE) -> float:
     """
-    🔧 FONCTION À PERSONNALISER : Calcul du PnL Mark-to-Market
+    FONCTION À PERSONNALISER : Calcul du PnL Mark-to-Market
     
     Args:
         deal: Deal à valoriser
@@ -103,7 +103,7 @@ def calculate_rate_pnl(deal: GenericDeal,
                        ois_rate_now: float, 
                        val_date: pd.Timestamp = VAL_DATE) -> float:
     """
-    🔧 FONCTION À PERSONNALISER : Calcul du PnL de taux
+    FONCTION À PERSONNALISER : Calcul du PnL de taux
     
     Args:
         deal: Deal à valoriser
@@ -137,7 +137,7 @@ def calculate_liquidity_pnl(deal: GenericDeal,
                            ois_rate_now: float, 
                            val_date: pd.Timestamp = VAL_DATE) -> float:
     """
-    🔧 FONCTION À PERSONNALISER : Calcul du PnL de liquidité
+    FONCTION À PERSONNALISER : Calcul du PnL de liquidité
     
     Args:
         deal: Deal à valoriser

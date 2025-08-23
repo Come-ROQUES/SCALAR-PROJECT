@@ -82,7 +82,7 @@ def create_pnl_breakdown_chart(df_pnl: pd.DataFrame) -> go.Figure:
                 ))
         
         fig.update_layout(
-            title='📊 Décomposition PnL par Type et Produit (M USD)',
+            title='Décomposition PnL par Type et Produit (M USD)',
             xaxis_title='Produit',
             yaxis_title='PnL (M USD)',
             barmode='stack',
@@ -160,7 +160,7 @@ def create_pnl_waterfall_enhanced(df_pnl: pd.DataFrame) -> go.Figure:
         ))
         
         fig.update_layout(
-            title='💰 Waterfall PnL Enhanced - Décomposition Complète',
+            title='Waterfall PnL Enhanced - Décomposition Complète',
             yaxis_title='PnL (M USD)',
             height=500,
             showlegend=False
@@ -209,7 +209,7 @@ def create_3d_risk_surface() -> go.Figure:
             fig = px.bar(
                 x=agg_data.index,
                 y=agg_data.values,
-                title='📊 Exposition par Paire (Vue 2D)',
+                title='Exposition par Paire (Vue 2D)',
                 labels={'x': 'Paire', 'y': 'Notionnel (M USD)'}
             )
             return fig
@@ -257,7 +257,7 @@ def create_3d_risk_surface() -> go.Figure:
         )])
         
         fig.update_layout(
-            title='🌊 Surface 3D VaR par Paire × Tenor',
+            title='Surface 3D VaR par Paire × Tenor',
             scene=dict(
                 xaxis=dict(
                     title='Tenor',
@@ -361,7 +361,7 @@ def create_3d_portfolio_composition() -> go.Figure:
             ))
         
         fig.update_layout(
-            title='🎯 Composition 3D Enhanced (Tous Produits)',
+            title='Composition 3D Enhanced (Tous Produits)',
             scene=dict(
                 xaxis_title='Paire',
                 yaxis_title='Tenor',
@@ -815,7 +815,7 @@ def create_pnl_trend_chart(df_pnl: pd.DataFrame, groupby_column: str = 'trade_da
             x=groupby_column,
             y='total_pnl_m',
             color='product',
-            title='📈 Évolution PnL par Date de Trade',
+            title='Évolution PnL par Date de Trade',
             labels={
                 groupby_column: 'Date',
                 'total_pnl_m': 'PnL Total (M USD)',
@@ -977,7 +977,7 @@ def create_risk_return_scatter(df_pnl: pd.DataFrame) -> go.Figure:
             color='product',
             size='amount',
             hover_data=['deal_id', 'client_rate'],
-            title='📊 Profil Risque-Rendement par Deal',
+            title='Profil Risque-Rendement par Deal',
             labels={
                 'risk_estimate': 'Risque Estimé (M USD)',
                 'return_estimate': 'Rendement (PnL M USD)',
@@ -1180,7 +1180,7 @@ def create_var_breakdown() -> go.Figure:
         )])
         
         fig.update_layout(
-            title='📊 Décomposition VaR par Composante',
+            title='Décomposition VaR par Composante',
             yaxis_title='VaR (M USD)',
             height=400,
             showlegend=False

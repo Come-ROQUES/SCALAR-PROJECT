@@ -27,7 +27,7 @@ try:
         logger = logging.getLogger(__name__)
     
 except ImportError as e:
-    st.error(f"❌ Erreur d'import: {e}")
+    st.error(f"ERROR Erreur d'import: {e}")
     st.info("Vérifiez que tous les modules Treasury sont présents")
     st.stop()
 
@@ -42,7 +42,7 @@ try:
     from ui.components.tabs.performance_tab import render_performance_tab
     from ui.components.footer import render_footer
 except ImportError as e:
-    st.error(f"❌ Erreur d'import UI: {e}")
+    st.error(f"ERROR Erreur d'import UI: {e}")
     st.info("Vérifiez la structure des dossiers ui/")
     st.stop()
 
@@ -62,13 +62,13 @@ def render_main_header():
 def render_navigation_tabs():
     """Rendu des onglets de navigation principaux"""
     tab_import, tab_pnl, tab_3d, tab_heatmaps, tab_var, tab_performance, tab_risk = st.tabs([
-        "📝 Import", 
-        "📈 PnL", 
-        "🌊 3D", 
-        "🔥 Heatmaps",
-        "🎲 VaR",
-        "📊 Performance",
-        "🚨 Risk Management"
+        "Import", 
+        "PnL", 
+        "3D", 
+        "Heatmaps",
+        "VaR",
+        "Performance",
+        "Risk Management"
     ])
     
     with tab_import:
@@ -95,7 +95,7 @@ def render_navigation_tabs():
 
 def handle_application_error(error: Exception):
     """Gestion centralisée des erreurs d'application"""
-    st.error(f"❌ Erreur application: {error}")
+    st.error(f"ERROR Erreur application: {error}")
     
     try:
         logger.error(f"Erreur main app: {error}")
@@ -103,7 +103,7 @@ def handle_application_error(error: Exception):
         pass  # En cas de problème de logging
     
     # Affichage debug en cas d'erreur
-    with st.expander("🐛 Debug Info"):
+    with st.expander("Debug Info"):
         st.exception(error)
         st.write("**Session State:**")
         st.json({
