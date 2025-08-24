@@ -17,14 +17,49 @@ from io import StringIO
 
 class CacheManager:
     """Gestionnaire de cache intelligent pour calculs Treasury"""
-    
+
     def __init__(self):
+        self._cache: Dict[str, Tuple[Any, Optional[float]]] = {}
         self.cache_stats = {
             'hits': 0,
             'misses': 0,
             'evictions': 0,
             'total_time_saved': 0.0
         }
+
+    def set(self, key: str, value: Any, ttl: Optional[float] = None) -> None:
+        """Store a value in the cache.
+
+        Parameters
+        ----------
+        key: str
+            Cache key.
+        value: Any
+            Value to store.
+        ttl: Optional[float]
+            Time-to-live in seconds. If provided, the cache entry expires
+            after ``ttl`` seconds.
+        """
+        expire_at = time.time() + ttl if ttl is not None else None
+        self._cache[key] = (value, expire_at)
+
+    def get(self, key: str) -> Any:
+        """Retrieve a value from the cache if present and not expired."""
+        entry = self._cache.get(key)
+        if not entry:
+            self.cache_stats['misses'] += 1
+            return None
+
+        value, expire_at = entry
+        if expire_at is not None and time.time() > expire_at:
+            # Entry expired
+            self.cache_stats['evictions'] += 1
+            self.cache_stats['misses'] += 1
+            del self._cache[key]
+            return None
+
+        self.cache_stats['hits'] += 1
+        return value
     
     def get_cache_info(self) -> Dict[str, Any]:
         """Retourne les statistiques du cache"""
@@ -44,11 +79,12 @@ class CacheManager:
             st.cache_data.clear()
             if hasattr(st, 'cache_resource'):
                 st.cache_resource.clear()
-        
+            self._cache.clear()
+
         # Reset stats
         self.cache_stats = {
             'hits': 0,
-            'misses': 0, 
+            'misses': 0,
             'evictions': 0,
             'total_time_saved': 0.0
         }

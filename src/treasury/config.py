@@ -1,6 +1,9 @@
 from dataclasses import dataclass
 from typing import Dict, Any, List, Optional
+
+# Re-export frequently used configuration dataclasses
 from .assets import get_image_b64
+from .models import PnLConfig
 
 
 @dataclass(frozen=True)
