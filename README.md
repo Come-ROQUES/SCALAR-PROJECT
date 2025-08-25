@@ -473,9 +473,9 @@ pytest tests/test_risk.py -v        # Risk management
 → Clear cache: Bouton "Vider Cache" dans sidebar
 
 # Performance dégradée
-→ Cache hit rate < 50%: Vérifier données consistent
-→ Memory issues: Clear cache régulièrement
-→ Serialization errors: Vérifier structure deals
+→ Taux de réussite du cache < 50%: vérifier que les données sont consistantes
+→ Problèmes de mémoire: vider le cache régulièrement
+→ Erreurs de sérialisation: vérifier la structure des deals
 ```
 
 ### Tests Echec
