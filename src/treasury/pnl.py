@@ -23,7 +23,6 @@ except ImportError:
         logger.info(f"⚡ {func_name}: {execution_time:.3f}s")
     def log_calculation_summary(module: str, deals_processed: int, errors: int, warnings: int):
         logger.info(f"{module}: {deals_processed} deals, {errors} erreurs")
-from .logging_config import logger, log_performance, log_calculation_summary
 
 
 def calculate_accrued_pnl(deal: GenericDeal, 
