@@ -1,4 +1,8 @@
 
+![4E18381E-994D-4AD0-8500-955F5889A1DC](https://github.com/user-attachments/assets/040167c8-6c92-41da-a9ab-ac2114e7d782)
+
+
+
 # SCALAR - Advanced Treasury Dashboard
 
 ## Version 2.2 
