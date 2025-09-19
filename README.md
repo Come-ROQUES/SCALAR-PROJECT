@@ -3,7 +3,7 @@
 
 
 
-# SCALAR - Advanced Treasury Dashboard
+# SCALAR - Advanced Trading Dashboard
 
 ## Version 2.2 
 
@@ -510,7 +510,7 @@ pytest tests/test_risk.py -v        # Risk management
 **Développeur** : Côme ROQUES  
 **Projet** : SCALAR-PROJECT  
 **Path** : `/Users/comeroques/Projects/IDOITFORFUN/SCALAR-PROJECT`  
-**Version** : Treasury Dashboard v2.1 - Cache Intelligent  
+**Version** : Trading Dashboard v2.1 - Cache Intelligent  
 **Status** : Production Ready avec Tests  
 
 ### Dépendances V2.1
