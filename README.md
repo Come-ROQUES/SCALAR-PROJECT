@@ -1,4 +1,3 @@
-
 # SCALAR - Advanced Treasury Dashboard
 
 ## Version 2.2 
@@ -129,13 +128,10 @@ cd src && streamlit run ui/app.py
 # Alternative avec PYTHONPATH
 export PYTHONPATH=$PWD/src && streamlit run src/ui/app.py
 
-<<<<<<< HEAD
 # Vérification : depuis SCALAR-PROJECT/
 pwd  # doit être: /Users/comeroques/Projects/IDOITFORFUN/SCALAR-PROJECT
 ```
 
-=======
->>>>>>> 225442aa6c2a64264d68e5cb82a1dfb835ec1971
 ---
 
 ## NOUVEAUTÉ V2.1 : Système de Cache Intelligent
@@ -169,9 +165,31 @@ df_pnl = compute_pnl_with_cache(deals, config)
 
 ---
 
-## Design System & UI
+## Design System & UI (NOUVEAU V2.2)
 
-### Thème Viridis Moderne (Inchangé)
+#### Thèmes Disponibles
+L'application propose maintenant **2 thèmes** sélectionnables via la sidebar :
+
+1. **✨ Liquid Glass** (par défaut)
+   - Effet glass morphism moderne
+   - Image de fond dynamique  
+   - Animations et transitions fluides
+   - Style Apple-inspired premium
+
+2. **🏢 Professional Dark** (nouveau)
+   - Interface épurée et professionnelle
+   - Fond noir uniforme sans distraction
+   - Bordures et ombres subtiles
+   - Optimisé pour usage corporate
+
+#### Sélection du Thème
+```
+Sidebar → 🎨 Theme → Style Interface
+├── ✨ Liquid Glass (moderne avec image)
+└── 🏢 Professional Dark (minimal professionnel)
+```
+
+### Thème Liquid Glass (Inchangé)
 ```python
 VIRIDIS_COLORS = {
     'primary': '#440154',      # Violet foncé
@@ -187,13 +205,29 @@ VIRIDIS_COLORS = {
 }
 ```
 
-### Sidebar Enrichie V2.1
+#### Thème Professional Dark (NOUVEAU)
+```python
+PROFESSIONAL_COLORS = {
+    'primary': '#2563eb',      # Bleu professionnel
+    'secondary': '#64748b',    # Gris ardoise
+    'accent': '#0ea5e9',       # Bleu ciel
+    'dark': '#0f172a',         # Noir ardoise
+    'bg_secondary': '#1e293b', # Gris foncé
+    'text_primary': '#f8fafc', # Blanc cassé
+    'border': '#334155',       # Bordure subtile
+}
 ```
+
+### Sidebar Enrichie V2.2
+```
+Theme (NOUVEAU)
+├── Sélecteur de style interface
+├── Description du thème actuel
 Status Portfolio
 ├── Badges des deals par type
 Configuration PnL  
 ├── Paramètres de calcul
-Cache & Performance (NOUVEAU)
+Cache & Performance
 ├── Cache Hit Rate: XX%
 ├── Temps économisé: X.Xs
 ├── Actions Cache (Vider/Stats)
@@ -534,8 +568,4 @@ Cache Performance:
 ---
 
 
-<<<<<<< HEAD
 **Dernière mise à jour** : 2025-08-17 - Cache intelligent intégré, tests opérationnels, performance optimisée
-=======
-**Dernière mise à jour** : 2025-08-17 - Cache intelligent intégré, tests opérationnels, performance optimisée
->>>>>>> 225442aa6c2a64264d68e5cb82a1dfb835ec1971

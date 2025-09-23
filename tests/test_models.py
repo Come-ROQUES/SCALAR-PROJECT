@@ -1,16 +1,16 @@
-# tests/test_models.py
+
 import pytest
 from datetime import date
 
 def test_sample_deal_creation(sample_deal):
-    """Test basique de création d'un deal"""
+    \
     assert sample_deal.deal_id == "TEST001"
     assert sample_deal.amount == 10_000_000
     assert sample_deal.trader_id == "TRADER_01"
 
 
 def test_imports_treasury():
-    """Test que les imports Treasury fonctionnent"""
+    \
     try:
         from treasury.models import GenericDeal, ProductType, DepositLoan
         from treasury.config import settings
@@ -22,10 +22,10 @@ def test_imports_treasury():
 
 
 def test_deal_basic_properties(sample_deal):
-    """Test propriétés basiques du deal"""
-    # Test que les dates sont cohérentes
+\
+
     assert sample_deal.value_date >= sample_deal.trade_date
     assert sample_deal.maturity_date > sample_deal.value_date
-    
-    # Test montant positif
+
+
     assert sample_deal.amount > 0

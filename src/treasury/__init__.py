@@ -1,70 +1,44 @@
-"""
-Treasury Dashboard - Package Principal
-Structure modulaire pour calculs PnL, gestion de risque et visualisations
-"""
-
 __version__ = "0.1.0"
 __author__ = "Treasury Team"
 
-# Imports principaux pour API simplifiée
 from .config import settings
 from .models import GenericDeal, ProductType, DepositLoan, MarketData, PnLConfig
 from .session import session_manager, init_session_state
 from .logging_config import logger
 
-# Imports des modules métier
 from .pnl import compute_enhanced_pnl_vectorized, get_pnl_summary
 from .market import get_ois_rate_now, MOCK_MARKET_DATA
 from .analytics import convert_generic_to_analytics_format, calculate_performance_metrics
 from .io.excel import build_template_generic, read_generic_deals_with_validation
 
-# API simplifiée pour utilisation externe
 __all__ = [
-    # Configuration
     'settings',
-    
-    # Modèles
     'GenericDeal',
-    'ProductType', 
+    'ProductType',
     'DepositLoan',
     'MarketData',
     'PnLConfig',
-    
-    # Session
     'session_manager',
     'init_session_state',
-    
-    # Logging
     'logger',
-    
-    # Core Business Logic
     'compute_enhanced_pnl_vectorized',
     'get_pnl_summary',
     'get_ois_rate_now',
     'MOCK_MARKET_DATA',
-    
-    # Analytics
     'convert_generic_to_analytics_format',
     'calculate_performance_metrics',
-    
-    # IO
     'build_template_generic',
     'read_generic_deals_with_validation',
 ]
 
 
 def get_version():
-    """Retourne la version du package"""
     return __version__
 
 
 def health_check():
-    """Vérification de santé du package"""
     try:
-        # Test imports
         from . import models, pnl, market, analytics, visuals, risk, io
-        
-        # Test basic functionality
         test_deal = GenericDeal(
             comment="Test Deal",
             product=ProductType.DEPOSIT,
@@ -73,22 +47,18 @@ def health_check():
             pair_currency="USD",
             amount=1000000,
             trade_date="2025-01-01",
-            value_date="2025-01-01", 
+            value_date="2025-01-01",
             maturity_date="2025-12-31",
             client_rate=0.05,
             ois_equivalent_rate=0.048
         )
-        
-        # Test calculation
         df_test = compute_enhanced_pnl_vectorized([test_deal])
-        
         return {
             'status': 'healthy',
             'version': __version__,
             'modules_loaded': True,
             'calculation_test': not df_test.empty
         }
-        
     except Exception as e:
         return {
             'status': 'error',
@@ -98,11 +68,10 @@ def health_check():
 
 
 def create_sample_portfolio():
-    """Crée un portefeuille d'exemple pour tests"""
     from datetime import datetime, timedelta
-    
+
     base_date = datetime.now()
-    
+
     sample_deals = [
         GenericDeal(
             comment="EUR/USD FX Swap 6M",
@@ -121,7 +90,7 @@ def create_sample_portfolio():
         GenericDeal(
             comment="USD IRS 3Y",
             product=ProductType.IRS,
-            deal_id="IRS001", 
+            deal_id="IRS001",
             d_or_l=DepositLoan.DEPOSIT,
             pair_currency="USD",
             amount=100_000_000,
@@ -161,41 +130,31 @@ def create_sample_portfolio():
             trader_id="TRD003"
         )
     ]
-    
+
     logger.info(f"Portefeuille d'exemple créé: {len(sample_deals)} deals")
     return sample_deals
 
 
-# Configuration par défaut du package
 def configure_package(
     debug_mode: bool = False,
     custom_market_data: MarketData = None,
     max_file_size_mb: int = None
 ):
-    """
-    Configure le package avec des paramètres personnalisés
-    
-    Args:
-        debug_mode: Active le mode debug
-        custom_market_data: Données de marché personnalisées
-        max_file_size_mb: Taille max fichiers upload
-    """
     global MOCK_MARKET_DATA
-    
+
     if debug_mode:
         logger.setLevel("DEBUG")
         logger.info("Mode debug activé")
-    
+
     if custom_market_data:
         from . import market
         market.MOCK_MARKET_DATA = custom_market_data
         logger.info("Données de marché personnalisées configurées")
-    
+
     if max_file_size_mb:
         from . import config
         config.settings.MAX_FILE_SIZE_MB = max_file_size_mb
         logger.info(f"Taille max fichier: {max_file_size_mb}MB")
 
 
-# Message de bienvenue lors de l'import
 logger.info(f"Treasury Dashboard v{__version__} - Modules chargés")

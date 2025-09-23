@@ -1,7 +1,7 @@
-\
-\
-\
-\
+"""
+Onglet Risk Management Moderne pour Treasury Dashboard
+Interface complète de gestion des risques avec analytics avancés
+"""
 
 import streamlit as st
 import pandas as pd
@@ -28,16 +28,16 @@ except ImportError:
 
 
 def render_risk_management_tab():
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
+    """
+    Onglet Risk Management principal - Version moderne et complète
+
+    Structure:
+    1. Dashboard Executive Summary
+    2. Limites et Violations
+    3. VaR Analysis (Monte Carlo + Analytique)
+    4. Stress Testing
+    5. Risk Decomposition
+    """
 
 
     st.markdown(_get_risk_css(), unsafe_allow_html=True)
@@ -90,7 +90,7 @@ def render_risk_management_tab():
 
 
 def _get_risk_css() -> str:
-    \
+    """CSS moderne pour l'onglet risk"""
     return """
     <style>
     .risk-header {
@@ -165,7 +165,7 @@ def _get_risk_css() -> str:
 
 
 def _render_no_data_state():
-    \
+    """Affichage quand pas de données"""
     st.markdown("""
     <div class="risk-alert risk-alert-info">
         <h3>📊 Données Required</h3>
@@ -180,7 +180,7 @@ def _render_no_data_state():
 
 
 def _initialize_risk_parameters():
-    \
+    """Initialise les paramètres de risque par défaut"""
     if 'risk_params' not in st.session_state:
         st.session_state.risk_params = {
 
@@ -213,7 +213,7 @@ def _initialize_risk_parameters():
 
 
 def _render_executive_summary(df_pnl: pd.DataFrame, df_analytics: pd.DataFrame):
-    \
+    """Dashboard executive summary avec KPIs principaux"""
     st.markdown("### 📊 Risk Dashboard - Vue d'ensemble")
 
 
@@ -286,7 +286,7 @@ def _render_executive_summary(df_pnl: pd.DataFrame, df_analytics: pd.DataFrame):
 
 
 def _render_limits_and_violations(df_pnl: pd.DataFrame, deals: List[Dict]):
-    \
+    """Configuration des limites et détection des violations"""
     st.markdown("### ⚠️ Risk Limits Configuration & Monitoring")
 
 
@@ -343,7 +343,7 @@ def _render_limits_and_violations(df_pnl: pd.DataFrame, deals: List[Dict]):
 
 
 def _render_var_analysis(df_analytics: pd.DataFrame):
-    \
+    """Analyse VaR complète avec Monte Carlo et méthodes analytiques"""
     st.markdown("### 📈 Value-at-Risk Analysis")
 
 
@@ -398,7 +398,7 @@ def _render_var_analysis(df_analytics: pd.DataFrame):
 
 
 def _render_stress_testing(df_analytics: pd.DataFrame):
-    \
+    """Module de stress testing avec scénarios prédéfinis et custom"""
     st.markdown("### 💥 Stress Testing & Scenario Analysis")
 
 
@@ -458,7 +458,7 @@ def _render_stress_testing(df_analytics: pd.DataFrame):
 
 
 def _render_risk_decomposition(df_pnl: pd.DataFrame, df_analytics: pd.DataFrame):
-    \
+    """Décomposition détaillée des risques par facteur"""
     st.markdown("### 🧩 Risk Factor Decomposition")
 
 
@@ -491,7 +491,7 @@ def _render_risk_decomposition(df_pnl: pd.DataFrame, df_analytics: pd.DataFrame)
 
 
 def _detect_modern_violations(df_pnl: pd.DataFrame, deals: List[Dict]) -> List[Dict]:
-    \
+    """Détection moderne des violations avec contexte enrichi"""
     violations = []
     params = st.session_state.risk_params
 
@@ -545,7 +545,7 @@ def _detect_modern_violations(df_pnl: pd.DataFrame, deals: List[Dict]) -> List[D
 
 
 def _create_currency_exposure_chart(df_pnl: pd.DataFrame) -> go.Figure:
-    \
+    """Graphique d'exposition par devise"""
     if 'base_currency' not in df_pnl.columns or 'amount' not in df_pnl.columns:
         return go.Figure().add_annotation(text="Data not available", x=0.5, y=0.5)
 
@@ -561,7 +561,7 @@ def _create_currency_exposure_chart(df_pnl: pd.DataFrame) -> go.Figure:
 
 
 def _create_pnl_distribution_chart(df_pnl: pd.DataFrame) -> go.Figure:
-    \
+    """Distribution des PnL par position"""
     if 'total_pnl' not in df_pnl.columns:
         return go.Figure().add_annotation(text="PnL data not available", x=0.5, y=0.5)
 
@@ -578,7 +578,7 @@ def _create_pnl_distribution_chart(df_pnl: pd.DataFrame) -> go.Figure:
 
 
 def _create_compliance_dashboard(violations: List[Dict]) -> go.Figure:
-    \
+    """Dashboard de compliance"""
     severity_counts = {}
     for v in violations:
         severity_counts[v['severity']] = severity_counts.get(v['severity'], 0) + 1
@@ -599,7 +599,7 @@ def _create_compliance_dashboard(violations: List[Dict]) -> go.Figure:
 
 
 def _display_var_results(var_results: Dict):
-    \
+    """Affichage des résultats VaR"""
     mc_results = var_results.get('monte_carlo', {})
     analytical = var_results.get('analytical', {})
 
@@ -632,7 +632,7 @@ def _display_var_results(var_results: Dict):
 
 
 def _display_stress_results(stress_results: pd.DataFrame):
-    \
+    """Affichage des résultats de stress testing"""
     if stress_results.empty:
         st.warning("No stress test results available")
         return
@@ -657,7 +657,7 @@ def _display_stress_results(stress_results: pd.DataFrame):
 
 
 def _create_risk_by_currency_chart(df_pnl: pd.DataFrame) -> go.Figure:
-    \
+    """Risk attribution par devise"""
     if 'base_currency' not in df_pnl.columns:
         return go.Figure().add_annotation(text="Currency data not available", x=0.5, y=0.5)
 
@@ -674,7 +674,7 @@ def _create_risk_by_currency_chart(df_pnl: pd.DataFrame) -> go.Figure:
 
 
 def _create_risk_by_maturity_chart(df_pnl: pd.DataFrame) -> go.Figure:
-    \
+    """Risk attribution par maturité"""
     if 'maturity_date' not in df_pnl.columns:
         return go.Figure().add_annotation(text="Maturity data not available", x=0.5, y=0.5)
 
@@ -698,7 +698,7 @@ def _create_risk_by_maturity_chart(df_pnl: pd.DataFrame) -> go.Figure:
 
 
 def _create_var_decomposition_chart(component_var: Dict) -> go.Figure:
-    \
+    """Décomposition de la VaR par composante"""
     components = []
     values = []
 
@@ -721,7 +721,7 @@ def _create_var_decomposition_chart(component_var: Dict) -> go.Figure:
 
 
 def _render_risk_sensitivities(df_pnl: pd.DataFrame, df_analytics: pd.DataFrame):
-    \
+    """Affichage des sensibilités aux risques (Greeks approximation)"""
     st.markdown("#### Greeks Approximation")
 
 
@@ -760,3 +760,364 @@ def _render_risk_sensitivities(df_pnl: pd.DataFrame, df_analytics: pd.DataFrame)
                     f"${portfolio_vol/1e6:.2f}M",
                     help="Historical PnL volatility"
                 )
+                    'type': 'Concentration Devise',
+                    'detail': f"{ccy}: {concentration:.1%} > {rl['max_tenor_concentration']:.1%}",
+                    'severity': 'error'
+                })
+
+    return violations
+
+
+def _check_notional_limits(df_pnl, rl) -> List[Dict[str, str]]:
+    """Vérifie les limites notionnelles par paire"""
+    violations = []
+
+    if 'pair_currency' in df_pnl.columns and 'amount' in df_pnl.columns:
+        pair_notionals = df_pnl.groupby('pair_currency')['amount'].sum()
+
+        for pair, notional in pair_notionals.items():
+            if notional > rl['max_notional_per_pair']:
+                violations.append({
+                    'type': 'Limite Notionnelle',
+                    'detail': f"{pair}: ${notional/1_000_000:.1f}M > ${rl['max_notional_per_pair']/1_000_000:.1f}M",
+                    'severity': 'error'
+                })
+
+    return violations
+
+
+def _check_trader_limits(deals, rl) -> List[Dict[str, str]]:
+    """Vérifie les limites par trader"""
+    violations = []
+
+    if hasattr(deals[0], 'trader_id'):
+        trader_counts = {}
+        for deal in deals:
+            trader_id = getattr(deal, 'trader_id', 'Unknown')
+            trader_counts[trader_id] = trader_counts.get(trader_id, 0) + 1
+
+        max_deals_limit = rl.get('max_deals_per_trader', 50)
+        for trader, count in trader_counts.items():
+            if count > max_deals_limit:
+                violations.append({
+                    'type': 'Limite Deals/Trader',
+                    'detail': f"{trader}: {count} deals > {max_deals_limit}",
+                    'severity': 'warning'
+                })
+
+    return violations
+
+
+def _render_stress_tests():
+    """Section stress tests interactifs"""
+    st.markdown("---")
+    st.markdown("### 🧪 Stress Tests Interactifs")
+
+    df_pnl = st.session_state.get('df_pnl_enhanced')
+
+    if df_pnl is None or df_pnl.empty:
+        st.info("Calculez d'abord les PnL pour les stress tests")
+        return
+
+    col1, col2 = st.columns([2, 1])
+
+    with col1:
+        st.markdown("**Paramètres de Choc:**")
+        fx_shock = st.slider("Choc FX (%)", -30, 30, -10, step=1, key="fx_shock_risk") / 100
+        rate_shock = st.slider("Choc Taux (bps)", -200, 200, 50, step=10, key="rate_shock_risk") / 10000
+        credit_shock = st.slider("Choc Crédit (bps)", -100, 300, 25, step=5, key="credit_shock_risk") / 10000
+
+
+        _render_predefined_scenarios()
+
+    with col2:
+        if st.button("🧪 Calculer Stress", type="primary", key="stress_button_risk"):
+            _calculate_stress_impact(df_pnl, fx_shock, rate_shock, credit_shock)
+
+
+def _render_predefined_scenarios():
+    """Affiche les scénarios prédéfinis"""
+    st.markdown("**Scénarios Prédéfinis:**")
+    scenarios = {
+        "Crise Systémique": {"fx": -0.15, "rate": 0.02, "credit": 0.02},
+        "Resserrement Fed": {"fx": -0.05, "rate": 0.015, "credit": 0.005},
+        "Crise Émergente": {"fx": -0.08, "rate": 0.005, "credit": 0.015},
+        "Volatilité Extrême": {"fx": -0.12, "rate": 0.01, "credit": 0.01},
+        "Carry Trade Unwind": {"fx": -0.06, "rate": -0.01, "credit": 0.005}
+    }
+
+    selected_scenario = st.selectbox(
+        "Choisir un scénario:",
+        ["Personnalisé"] + list(scenarios.keys()),
+        key="scenario_selector"
+    )
+
+    if selected_scenario != "Personnalisé":
+        scenario_data = scenarios[selected_scenario]
+        st.info(f"""Scénario '{selected_scenario}':
+        FX {scenario_data['fx']:.1%},
+        Taux {scenario_data['rate']*10000:.0f}bp,
+        Crédit {scenario_data['credit']*10000:.0f}bp""")
+
+
+def _calculate_stress_impact(df_pnl, fx_shock, rate_shock, credit_shock):
+    """Calcule l'impact des stress tests"""
+    with st.spinner("Calcul stress tests..."):
+        total_notional = df_pnl['amount'].sum() if 'amount' in df_pnl.columns else 0
+        rl = st.session_state.risk_limits
+
+
+        impacts = _compute_shock_impacts(df_pnl, fx_shock, rate_shock, credit_shock, total_notional)
+
+
+        _display_stress_metrics(impacts, rl)
+
+
+        _create_stress_visualization(impacts, fx_shock, rate_shock, credit_shock)
+
+
+def _compute_shock_impacts(df_pnl, fx_shock, rate_shock, credit_shock, total_notional):
+    """Calcule les impacts par composante"""
+    fx_impact = 0
+    rate_impact = 0
+    credit_impact = 0
+
+    if 'product' in df_pnl.columns:
+
+        fx_products = ['FX_SWAP', 'FX_FORWARD']
+        fx_notional = df_pnl[df_pnl['product'].isin(fx_products)]['amount'].sum()
+        fx_impact = fx_notional * fx_shock
+
+
+        rate_products = ['IRS', 'DEPOSIT', 'LOAN']
+        rate_sensitive_notional = df_pnl[df_pnl['product'].isin(rate_products)]['amount'].sum()
+        rate_impact = rate_sensitive_notional * rate_shock * 2.0
+
+
+        credit_impact = total_notional * credit_shock * 0.1
+
+    total_impact = fx_impact + rate_impact + credit_impact
+
+    return {
+        'fx': fx_impact,
+        'rate': rate_impact,
+        'credit': credit_impact,
+        'total': total_impact
+    }
+
+
+def _display_stress_metrics(impacts, rl):
+    """Affiche les métriques de stress"""
+    col_a, col_b, col_c, col_d = st.columns(4)
+    col_a.metric("Impact FX", f"${impacts['fx']/1_000_000:+.1f}M")
+    col_b.metric("Impact Taux", f"${impacts['rate']/1_000_000:+.1f}M")
+    col_c.metric("Impact Crédit", f"${impacts['credit']/1_000_000:+.1f}M")
+    col_d.metric("Impact Total", f"${impacts['total']/1_000_000:+.1f}M")
+
+
+    if abs(impacts['total']) > rl['var_limit']:
+        st.markdown(f"""
+        <div class="alert-modern alert-error">
+            🚨 STRESS DÉPASSE LIMITE VaR: ${abs(impacts['total'])/1_000_000:.1f}M > ${rl['var_limit']/1_000_000:.1f}M
+        </div>
+        """, unsafe_allow_html=True)
+    else:
+        st.markdown(f"""
+        <div class="alert-modern alert-success">
+            ✅ Stress dans les limites VaR: ${abs(impacts['total'])/1_000_000:.1f}M ≤ ${rl['var_limit']/1_000_000:.1f}M
+        </div>
+        """, unsafe_allow_html=True)
+
+
+def _create_stress_visualization(impacts, fx_shock, rate_shock, credit_shock):
+    """Crée la visualisation des stress tests"""
+    fig_stress = go.Figure()
+    fig_stress.add_trace(go.Bar(
+        name='Impact par Composante',
+        x=['FX Shock', 'Rate Shock', 'Credit Shock', 'Total'],
+        y=[impacts['fx']/1_000_000, impacts['rate']/1_000_000,
+           impacts['credit']/1_000_000, impacts['total']/1_000_000],
+        marker_color=['#440154', '#31688e', '#35b779', '#fde725'],
+        text=[f"{impacts['fx']/1_000_000:+.1f}M", f"{impacts['rate']/1_000_000:+.1f}M",
+              f"{impacts['credit']/1_000_000:+.1f}M", f"{impacts['total']/1_000_000:+.1f}M"],
+        textposition='auto'
+    ))
+    fig_stress.update_layout(
+        title=f'🧪 Impact Stress Test: FX {fx_shock:.1%}, Taux {rate_shock*10000:.0f}bp, Crédit {credit_shock*10000:.0f}bp',
+        yaxis_title='Impact (M USD)',
+        height=400,
+        showlegend=False,
+        template='plotly_dark'
+    )
+    st.plotly_chart(fig_stress, use_container_width=True, key="stress_interactive_chart")
+
+
+def _render_real_time_monitoring():
+    """Section monitoring temps réel"""
+    st.markdown("---")
+    st.markdown("### Monitoring Temps Réel")
+
+    df_pnl = st.session_state.get('df_pnl_enhanced')
+
+    if df_pnl is None or df_pnl.empty:
+        st.info("Calculez d'abord les PnL pour le monitoring")
+        return
+
+    col1, col2, col3, col4 = st.columns(4)
+
+    with col1:
+        _render_global_utilization_card(df_pnl)
+
+    with col2:
+        _render_urgent_deals_card(df_pnl)
+
+    with col3:
+        _render_concentration_card(df_pnl)
+
+    with col4:
+        _render_risk_score_card(df_pnl)
+
+
+def _render_global_utilization_card(df_pnl):
+    """Carte utilisation globale"""
+    rl = st.session_state.risk_limits
+    total_notional = df_pnl['amount'].sum() if 'amount' in df_pnl.columns else 0
+    global_limit = rl['max_notional_per_pair'] * 5
+    utilization = (total_notional / global_limit * 100) if global_limit > 0 else 0
+
+    if utilization > 80:
+        color, text = '#ff6b6b', '🚨 CRITIQUE'
+    elif utilization > 60:
+        color, text = '#ffa726', '⚠️ ATTENTION'
+    else:
+        color, text = '#35b779', '✅ OK'
+
+    st.markdown(f"""
+    <div class="modern-card" style="background:{color};color:white;text-align:center">
+        <h4>Utilisation Globale</h4>
+        <h2>{utilization:.1f}%</h2>
+        <p>{text}</p>
+    </div>
+    """, unsafe_allow_html=True)
+
+
+def _render_urgent_deals_card(df_pnl):
+    """Carte deals urgents"""
+    urgent_count = 0
+
+    if 'maturity_date' in df_pnl.columns:
+        try:
+            from treasury.utils.dates import VAL_DATE
+        except ImportError:
+            VAL_DATE = pd.Timestamp.now()
+
+        df_temp = df_pnl.copy()
+        df_temp['days_to_maturity'] = (pd.to_datetime(df_temp['maturity_date']) - VAL_DATE).dt.days
+        urgent_count = len(df_temp[df_temp['days_to_maturity'] <= 7])
+
+    if urgent_count > 5:
+        color, text = '#ff6b6b', '🚨 URGENT'
+    elif urgent_count > 2:
+        color, text = '#ffa726', '⚠️ SURVEILLER'
+    else:
+        color, text = '#35b779', '✅ SOUS CONTRÔLE'
+
+    st.markdown(f"""
+    <div class="modern-card" style="background:{color};color:white;text-align:center">
+        <h4>Échéances ≤ 7j</h4>
+        <h2>{urgent_count}</h2>
+        <p>{text}</p>
+    </div>
+    """, unsafe_allow_html=True)
+
+
+def _render_concentration_card(df_pnl):
+    """Carte concentration maximale"""
+    rl = st.session_state.risk_limits
+    max_concentration = 0
+
+    if 'base_currency' in df_pnl.columns and 'amount' in df_pnl.columns:
+        total_notional = df_pnl['amount'].sum()
+        ccy_expo = df_pnl.groupby('base_currency')['amount'].sum()
+        max_concentration = (ccy_expo.max() / total_notional * 100) if total_notional > 0 else 0
+
+    if max_concentration > rl['max_tenor_concentration'] * 100:
+        color, text = '#ff6b6b', '🚨 LIMITE DÉPASSÉE'
+    elif max_concentration > rl['max_tenor_concentration'] * 80:
+        color, text = '#ffa726', '⚠️ PROCHE LIMITE'
+    else:
+        color, text = '#35b779', '✅ OK'
+
+    st.markdown(f"""
+    <div class="modern-card" style="background:{color};color:white;text-align:center">
+        <h4>Concentration Max</h4>
+        <h2>{max_concentration:.1f}%</h2>
+        <p>{text}</p>
+    </div>
+    """, unsafe_allow_html=True)
+
+
+def _render_risk_score_card(df_pnl):
+    """Carte score de risque global"""
+
+    risk_score = _calculate_composite_risk_score(df_pnl)
+
+    if risk_score >= 70:
+        color, text = '#ff6b6b', '🚨 RISQUE ÉLEVÉ'
+    elif risk_score >= 40:
+        color, text = '#ffa726', '⚠️ RISQUE MODÉRÉ'
+    else:
+        color, text = '#35b779', '✅ RISQUE FAIBLE'
+
+    st.markdown(f"""
+    <div class="modern-card" style="background:{color};color:white;text-align:center">
+        <h4>Score Risque Global</h4>
+        <h2>{risk_score}/100</h2>
+        <p>{text}</p>
+    </div>
+    """, unsafe_allow_html=True)
+
+
+def _calculate_composite_risk_score(df_pnl) -> int:
+    """Calcule un score de risque composite"""
+    risk_score = 0
+    rl = st.session_state.risk_limits
+
+
+    if 'amount' in df_pnl.columns:
+        total_notional = df_pnl['amount'].sum()
+        global_limit = rl['max_notional_per_pair'] * 5
+        utilization = (total_notional / global_limit * 100) if global_limit > 0 else 0
+
+        if utilization > 80:
+            risk_score += 40
+        elif utilization > 60:
+            risk_score += 20
+
+
+    if 'maturity_date' in df_pnl.columns:
+        try:
+            from treasury.utils.dates import VAL_DATE
+            df_temp = df_pnl.copy()
+            df_temp['days_to_maturity'] = (pd.to_datetime(df_temp['maturity_date']) - VAL_DATE).dt.days
+            urgent_count = len(df_temp[df_temp['days_to_maturity'] <= 7])
+
+            if urgent_count > 5:
+                risk_score += 30
+            elif urgent_count > 2:
+                risk_score += 15
+        except:
+            pass
+
+
+    if 'base_currency' in df_pnl.columns and 'amount' in df_pnl.columns:
+        total_notional = df_pnl['amount'].sum()
+        ccy_expo = df_pnl.groupby('base_currency')['amount'].sum()
+        max_concentration = (ccy_expo.max() / total_notional) if total_notional > 0 else 0
+
+        if max_concentration > rl['max_tenor_concentration']:
+            risk_score += 30
+        elif max_concentration > rl['max_tenor_concentration'] * 0.8:
+            risk_score += 15
+
+    return min(risk_score, 100)

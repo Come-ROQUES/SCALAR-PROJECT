@@ -1,7 +1,7 @@
-"""
-Système de notifications et alertes pour Treasury Dashboard
-Monitoring temps réel des seuils de risque
-"""
+\
+\
+\
+\
 
 import streamlit as st
 import pandas as pd
@@ -15,15 +15,15 @@ from ..logging_config import logger
 
 
 class AlertLevel(str, Enum):
-    """Niveaux d'alerte"""
+    \
     INFO = "info"
-    WARNING = "warning" 
+    WARNING = "warning"
     CRITICAL = "critical"
     FATAL = "fatal"
 
 
 class AlertType(str, Enum):
-    """Types d'alertes"""
+    \
     VAR_BREACH = "var_breach"
     CONCENTRATION = "concentration"
     MTM_SHOCK = "mtm_shock"
@@ -34,7 +34,7 @@ class AlertType(str, Enum):
 
 @dataclass
 class Alert:
-    """Structure d'une alerte"""
+    \
     alert_id: str
     alert_type: AlertType
     level: AlertLevel
@@ -47,9 +47,9 @@ class Alert:
     is_active: bool = True
     acknowledged_by: Optional[str] = None
     acknowledged_at: Optional[datetime] = None
-    
+
     def to_dict(self) -> Dict:
-        """Sérialise l'alerte en dictionnaire"""
+        \
         return {
             'alert_id': self.alert_id,
             'alert_type': self.alert_type.value,
@@ -67,39 +67,39 @@ class Alert:
 
 
 class AlertManager:
-    """Gestionnaire d'alertes centralisé"""
-    
+\
+
     def __init__(self):
         self.active_alerts: List[Alert] = []
         self.alert_history: List[Alert] = []
         self.notification_handlers: List[Callable] = []
-        
-        # Configuration seuils par défaut
+
+
         self.thresholds = {
-            'var_95_limit': 5_000_000,     # 5M USD
-            'var_99_limit': 10_000_000,    # 10M USD
-            'concentration_limit': 0.30,    # 30% max par currency
-            'mtm_shock_limit': 2_000_000,  # 2M USD choc MTM
-            'data_quality_min': 0.95       # 95% données valides
+            'var_95_limit': 5_000_000,
+            'var_99_limit': 10_000_000,
+            'concentration_limit': 0.30,
+            'mtm_shock_limit': 2_000_000,
+            'data_quality_min': 0.95
         }
-        
-        # Chargement depuis session si disponible
+
+
         self._load_from_session()
-    
+
     def add_notification_handler(self, handler: Callable[[Alert], None]):
-        """Ajoute un handler de notification"""
+        \
         self.notification_handlers.append(handler)
-    
-    def create_alert(self, 
+
+    def create_alert(self,
                     alert_type: AlertType,
                     level: AlertLevel,
                     title: str,
                     message: str,
                     **kwargs) -> Alert:
-        """Crée une nouvelle alerte"""
-        
+\
+
         alert_id = f"{alert_type.value}_{int(datetime.now().timestamp())}"
-        
+
         alert = Alert(
             alert_id=alert_id,
             alert_type=alert_type,
@@ -108,39 +108,39 @@ class AlertManager:
             message=message,
             **kwargs
         )
-        
-        # Éviter doublons récents (5 min)
+
+
         recent_similar = [
-            a for a in self.active_alerts 
-            if (a.alert_type == alert_type and 
+            a for a in self.active_alerts
+            if (a.alert_type == alert_type and
                 a.title == title and
                 (datetime.now() - a.timestamp) < timedelta(minutes=5))
         ]
-        
+
         if not recent_similar:
             self.active_alerts.append(alert)
             self._notify_handlers(alert)
             self._save_to_session()
             logger.warning(f"ALERTE {level.value.upper()}: {title}")
-        
+
         return alert
-    
+
     def acknowledge_alert(self, alert_id: str, user: str = "system"):
-        """Acquitte une alerte"""
+        \
         for alert in self.active_alerts:
             if alert.alert_id == alert_id:
                 alert.acknowledged_by = user
                 alert.acknowledged_at = datetime.now()
                 alert.is_active = False
-                
-                # Déplacer vers historique
+
+
                 self.alert_history.append(alert)
                 self.active_alerts.remove(alert)
                 self._save_to_session()
                 break
-    
+
     def check_var_limits(self, var_95: float, var_99: float):
-        """Vérifie les limites VaR"""
+        \
         if abs(var_95) > self.thresholds['var_95_limit']:
             self.create_alert(
                 AlertType.VAR_BREACH,
@@ -150,7 +150,7 @@ class AlertManager:
                 current_value=var_95,
                 threshold_value=self.thresholds['var_95_limit']
             )
-        
+
         if abs(var_99) > self.thresholds['var_99_limit']:
             self.create_alert(
                 AlertType.VAR_BREACH,
@@ -160,17 +160,17 @@ class AlertManager:
                 current_value=var_99,
                 threshold_value=self.thresholds['var_99_limit']
             )
-    
+
     def check_concentration_risk(self, df_pnl: pd.DataFrame):
-        """Vérifie les concentrations par devise/contrepartie"""
+        \
         if df_pnl.empty:
             return
-        
-        # Concentration par devise
+
+
         if 'base_currency' in df_pnl.columns and 'amount' in df_pnl.columns:
             total_notional = df_pnl['amount'].sum()
             currency_exposure = df_pnl.groupby('base_currency')['amount'].sum()
-            
+
             for currency, exposure in currency_exposure.items():
                 concentration = exposure / total_notional
                 if concentration > self.thresholds['concentration_limit']:
@@ -182,9 +182,9 @@ class AlertManager:
                         current_value=concentration,
                         threshold_value=self.thresholds['concentration_limit']
                     )
-    
+
     def check_data_quality(self, df_pnl: pd.DataFrame):
-        """Vérifie la qualité des données"""
+        \
         if df_pnl.empty:
             self.create_alert(
                 AlertType.DATA_QUALITY,
@@ -193,12 +193,12 @@ class AlertManager:
                 "Dataset PnL vide - calculs impossibles"
             )
             return
-        
-        # Pourcentage de données valides
+
+
         total_rows = len(df_pnl)
         valid_rows = len(df_pnl.dropna(subset=['total_pnl']))
         quality_ratio = valid_rows / total_rows if total_rows > 0 else 0
-        
+
         if quality_ratio < self.thresholds['data_quality_min']:
             self.create_alert(
                 AlertType.DATA_QUALITY,
@@ -208,16 +208,16 @@ class AlertManager:
                 current_value=quality_ratio,
                 threshold_value=self.thresholds['data_quality_min']
             )
-    
+
     def check_mtm_shocks(self, df_pnl: pd.DataFrame):
-        """Détecte les chocs MTM importants"""
+        \
         if df_pnl.empty or 'mtm_pnl' not in df_pnl.columns:
             return
-        
+
         total_mtm = df_pnl['mtm_pnl'].sum()
         if abs(total_mtm) > self.thresholds['mtm_shock_limit']:
             level = AlertLevel.WARNING if abs(total_mtm) < self.thresholds['mtm_shock_limit'] * 2 else AlertLevel.CRITICAL
-            
+
             self.create_alert(
                 AlertType.MTM_SHOCK,
                 level,
@@ -226,36 +226,36 @@ class AlertManager:
                 current_value=total_mtm,
                 threshold_value=self.thresholds['mtm_shock_limit']
             )
-    
+
     def run_full_monitoring(self, df_pnl: pd.DataFrame, var_results: Dict = None):
-        """Lance tous les contrôles de monitoring"""
+        \
         logger.info("Lancement monitoring complet...")
-        
-        # Qualité des données
+
+
         self.check_data_quality(df_pnl)
-        
-        # Concentration
+
+
         self.check_concentration_risk(df_pnl)
-        
-        # MTM shocks
+
+
         self.check_mtm_shocks(df_pnl)
-        
-        # VaR si disponible
+
+
         if var_results:
             var_95 = var_results.get('var_95', 0)
             var_99 = var_results.get('var_99', 0)
             self.check_var_limits(var_95, var_99)
-        
+
         logger.info(f"Monitoring terminé - {len(self.active_alerts)} alertes actives")
-    
+
     def get_dashboard_summary(self) -> Dict:
-        """Résumé pour dashboard"""
+        \
         active_by_level = {}
         for level in AlertLevel:
             active_by_level[level.value] = len([
                 a for a in self.active_alerts if a.level == level
             ])
-        
+
         return {
             'total_active': len(self.active_alerts),
             'by_level': active_by_level,
@@ -263,51 +263,51 @@ class AlertManager:
             'critical_count': active_by_level.get('critical', 0),
             'warning_count': active_by_level.get('warning', 0)
         }
-    
+
     def _notify_handlers(self, alert: Alert):
-        """Notifie tous les handlers"""
+        \
         for handler in self.notification_handlers:
             try:
                 handler(alert)
             except Exception as e:
                 logger.error(f"Erreur notification handler: {e}")
-    
+
     def _save_to_session(self):
-        """Sauvegarde en session Streamlit"""
+        \
         if 'st' in globals():
             st.session_state['alert_manager_data'] = {
                 'active_alerts': [a.to_dict() for a in self.active_alerts],
-                'alert_history': [a.to_dict() for a in self.alert_history[-50:]],  # Garder 50 dernières
+                'alert_history': [a.to_dict() for a in self.alert_history[-50:]],
                 'thresholds': self.thresholds
             }
-    
+
     def _load_from_session(self):
-        """Charge depuis session Streamlit"""
+        \
         if 'st' in globals() and 'alert_manager_data' in st.session_state:
             data = st.session_state['alert_manager_data']
-            
-            # TODO: Reconstituer les alertes depuis dict
+
+
             if 'thresholds' in data:
                 self.thresholds.update(data['thresholds'])
 
 
-# Instance globale
+
 alert_manager = AlertManager()
 
 
-# Handlers de notification par défaut
+
 def streamlit_notification_handler(alert: Alert):
-    """Handler pour notifications Streamlit"""
+    \
     if 'st' in globals():
         icon_map = {
             AlertLevel.INFO: "INFO",
-            AlertLevel.WARNING: "WARNING", 
+            AlertLevel.WARNING: "WARNING",
             AlertLevel.CRITICAL: "CRITICAL",
             AlertLevel.FATAL: "FATAL"
         }
-        
+
         icon = icon_map.get(alert.level, "ALERT")
-        
+
         if alert.level in [AlertLevel.CRITICAL, AlertLevel.FATAL]:
             st.error(f"{icon} **{alert.title}**: {alert.message}")
         elif alert.level == AlertLevel.WARNING:
@@ -317,11 +317,11 @@ def streamlit_notification_handler(alert: Alert):
 
 
 def email_notification_handler(alert: Alert):
-    """Handler pour notifications email (à implémenter)"""
-    # TODO: Intégration SMTP pour alertes critiques
+\
+
     if alert.level in [AlertLevel.CRITICAL, AlertLevel.FATAL]:
         logger.info(f"📧 Email notification needed for: {alert.title}")
 
 
-# Configuration par défaut
+
 alert_manager.add_notification_handler(streamlit_notification_handler)

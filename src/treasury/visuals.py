@@ -1,7 +1,7 @@
-"""
-Module de visualisations pour le Treasury Dashboard
-Extrait du monolithe app.py
-"""
+\
+\
+\
+\
 
 import numpy as np
 import pandas as pd
@@ -14,17 +14,17 @@ from .logging_config import logger
 
 
 def create_pnl_breakdown_chart(df_pnl: pd.DataFrame) -> go.Figure:
-    """
-    Graphique de décomposition PnL par type et produit
-    
-    Args:
-        df_pnl: DataFrame avec résultats PnL
-        
-    Returns:
-        go.Figure: Graphique Plotly
-    """
+    \
+\
+\
+\
+\
+\
+\
+\
+\
     fig = go.Figure()
-    
+
     try:
         if df_pnl.empty:
             fig.add_annotation(
@@ -33,11 +33,11 @@ def create_pnl_breakdown_chart(df_pnl: pd.DataFrame) -> go.Figure:
                 showarrow=False, font_size=16
             )
             return fig
-        
-        # Agrégation par produit
+
+
         pnl_columns = ['accrued_pnl', 'mtm_pnl', 'rate_pnl', 'liquidity_pnl']
         available_columns = [col for col in pnl_columns if col in df_pnl.columns]
-        
+
         if not available_columns:
             fig.add_annotation(
                 text="Colonnes PnL non trouvées",
@@ -45,31 +45,31 @@ def create_pnl_breakdown_chart(df_pnl: pd.DataFrame) -> go.Figure:
                 showarrow=False, font_size=16
             )
             return fig
-        
-        # Groupement par produit
+
+
         agg_dict = {col: 'sum' for col in available_columns}
         pnl_by_product = df_pnl.groupby('product').agg(agg_dict).reset_index()
-        
-        # Conversion en millions
+
+
         for col in available_columns:
             pnl_by_product[f'{col}_m'] = pnl_by_product[col] / 1_000_000
-        
-        # Couleurs pour chaque type de PnL
+
+
         colors = {
             'accrued_pnl_m': '#4ecdc4',
-            'mtm_pnl_m': '#45b7d1', 
+            'mtm_pnl_m': '#45b7d1',
             'rate_pnl_m': '#96ceb4',
             'liquidity_pnl_m': '#ffeaa7'
         }
-        
+
         names = {
             'accrued_pnl_m': 'Accrued PnL',
             'mtm_pnl_m': 'MTM PnL',
             'rate_pnl_m': 'Rate PnL',
             'liquidity_pnl_m': 'Liquidity PnL'
         }
-        
-        # Ajout des barres empilées
+
+
         for col in available_columns:
             col_m = f'{col}_m'
             if col_m in pnl_by_product.columns:
@@ -80,18 +80,21 @@ def create_pnl_breakdown_chart(df_pnl: pd.DataFrame) -> go.Figure:
                     marker_color=colors.get(col_m, '#cccccc'),
                     hovertemplate=f'<b>%{{x}}</b><br>{names.get(col_m, col)}: %{{y:.2f}}M USD<extra></extra>'
                 ))
-        
+
         fig.update_layout(
             title='Décomposition PnL par Type et Produit (M USD)',
             xaxis_title='Produit',
             yaxis_title='PnL (M USD)',
             barmode='stack',
             height=400,
-            hovermode='x unified'
+            hovermode='x unified',
+            paper_bgcolor='rgba(0,0,0,0)',
+            plot_bgcolor='rgba(0,0,0,0)',
+            font=dict(color='white')
         )
-        
+
         logger.debug("Graphique PnL breakdown créé")
-        
+
     except Exception as e:
         logger.error(f"Erreur création graphique PnL breakdown: {e}")
         fig.add_annotation(
@@ -99,22 +102,22 @@ def create_pnl_breakdown_chart(df_pnl: pd.DataFrame) -> go.Figure:
             xref="paper", yref="paper", x=0.5, y=0.5,
             showarrow=False, font_size=14, font_color="red"
         )
-    
+
     return fig
 
 
 def create_pnl_waterfall_enhanced(df_pnl: pd.DataFrame) -> go.Figure:
-    """
-    Waterfall PnL avec décomposition complète
-    
-    Args:
-        df_pnl: DataFrame avec résultats PnL
-        
-    Returns:
-        go.Figure: Graphique waterfall
-    """
+    \
+\
+\
+\
+\
+\
+\
+\
+\
     fig = go.Figure()
-    
+
     try:
         if df_pnl.empty:
             fig.add_annotation(
@@ -123,15 +126,15 @@ def create_pnl_waterfall_enhanced(df_pnl: pd.DataFrame) -> go.Figure:
                 showarrow=False, font_size=16
             )
             return fig
-        
-        # Composantes PnL
+
+
         components = {}
         pnl_columns = ['accrued_pnl', 'mtm_pnl', 'rate_pnl', 'liquidity_pnl']
-        
+
         for col in pnl_columns:
             if col in df_pnl.columns:
                 components[col.replace('_pnl', '').title()] = df_pnl[col].sum() / 1_000_000
-        
+
         if not components:
             fig.add_annotation(
                 text="Aucune composante PnL trouvée",
@@ -139,12 +142,12 @@ def create_pnl_waterfall_enhanced(df_pnl: pd.DataFrame) -> go.Figure:
                 showarrow=False, font_size=16
             )
             return fig
-        
+
         categories = list(components.keys())
         values = list(components.values())
         total_value = sum(values)
-        
-        # Création du waterfall
+
+
         fig.add_trace(go.Waterfall(
             name="PnL Breakdown",
             orientation="v",
@@ -158,16 +161,19 @@ def create_pnl_waterfall_enhanced(df_pnl: pd.DataFrame) -> go.Figure:
             decreasing={"marker": {"color": "#ff6b6b"}},
             totals={"marker": {"color": "#45b7d1"}}
         ))
-        
+
         fig.update_layout(
             title='Waterfall PnL Enhanced - Décomposition Complète',
             yaxis_title='PnL (M USD)',
             height=500,
-            showlegend=False
+            showlegend=False,
+            paper_bgcolor='rgba(0,0,0,0)',
+            plot_bgcolor='rgba(0,0,0,0)',
+            font=dict(color='white')
         )
-        
+
         logger.debug("Graphique waterfall créé")
-        
+
     except Exception as e:
         logger.error(f"Erreur waterfall: {e}")
         fig.add_annotation(
@@ -175,21 +181,21 @@ def create_pnl_waterfall_enhanced(df_pnl: pd.DataFrame) -> go.Figure:
             xref="paper", yref="paper", x=0.5, y=0.5,
             showarrow=False, font_size=14, font_color="red"
         )
-    
+
     return fig
 
 
 def create_3d_risk_surface() -> go.Figure:
-    """
-    Surface 3D de risque par paire et tenor - VERSION COMPLÈTE
-    """
-    # Import du session state ici pour éviter la dépendance circulaire
+\
+\
+\
+
     import streamlit as st
-    
+
     try:
         df_pnl = st.session_state.get('df_pnl_enhanced', pd.DataFrame())
         df = convert_generic_to_analytics_format(df_pnl)
-        
+
         if df.empty:
             fig = go.Figure()
             fig.add_annotation(
@@ -198,12 +204,12 @@ def create_3d_risk_surface() -> go.Figure:
                 showarrow=False, font_size=16
             )
             return fig
-        
-        # Récupération des dimensions
+
+
         tenors = sorted(df['tenor'].dropna().unique().tolist())
         pairs = sorted(df['paire'].dropna().unique().tolist())
-        
-        # Fallback 2D si pas assez de données
+
+
         if len(tenors) < 2 or len(pairs) < 2:
             agg_data = df.groupby('paire')['notional'].sum() / 1_000_000
             fig = px.bar(
@@ -213,27 +219,27 @@ def create_3d_risk_surface() -> go.Figure:
                 labels={'x': 'Paire', 'y': 'Notionnel (M USD)'}
             )
             return fig
-        
-        # Construction matrice 3D
+
+
         df['tenor'] = pd.Categorical(df['tenor'], categories=tenors, ordered=True)
-        
-        # Agrégation et calcul VaR approximative
+
+
         g = (df.groupby(['paire', 'tenor'])['notional']
              .sum().div(1_000_000).rename('notional_m').reset_index())
-        
-        # VaR approximative = notionnel × volatilité × facteur confiance
-        g['vol'] = 0.18  # 18% volatilité approximative
-        g['var_m'] = g['notional_m'] * g['vol'] * 2.33  # 99% VaR
-        
-        # Pivot pour surface
+
+
+        g['vol'] = 0.18
+        g['var_m'] = g['notional_m'] * g['vol'] * 2.33
+
+
         Z = g.pivot(index='paire', columns='tenor', values='var_m').fillna(0.0)
-        
-        # Grilles pour surface
+
+
         x_indices = np.arange(len(Z.columns))
         y_indices = np.arange(len(Z.index))
         X, Y = np.meshgrid(x_indices, y_indices)
-        
-        # Hover text
+
+
         hover_text = []
         for i, pair in enumerate(Z.index):
             row = []
@@ -242,8 +248,8 @@ def create_3d_risk_surface() -> go.Figure:
                 hover_str = f"Paire: {pair}<br>Tenor: {tenor}<br>VaR: {var_val:.2f}M USD"
                 row.append(hover_str)
             hover_text.append(row)
-        
-        # Surface 3D
+
+
         fig = go.Figure(data=[go.Surface(
             z=Z.values,
             x=X,
@@ -255,7 +261,7 @@ def create_3d_risk_surface() -> go.Figure:
             showscale=True,
             colorbar=dict(title="VaR (M USD)")
         )])
-        
+
         fig.update_layout(
             title='Surface 3D VaR par Paire × Tenor',
             scene=dict(
@@ -263,23 +269,29 @@ def create_3d_risk_surface() -> go.Figure:
                     title='Tenor',
                     tickmode='array',
                     tickvals=x_indices,
-                    ticktext=Z.columns.tolist()
+                    ticktext=Z.columns.tolist(),
+                    titlefont=dict(color='white'),
+                    tickfont=dict(color='white')
                 ),
                 yaxis=dict(
                     title='Paire',
                     tickmode='array',
                     tickvals=y_indices,
-                    ticktext=Z.index.tolist()
+                    ticktext=Z.index.tolist(),
+                    titlefont=dict(color='white'),
+                    tickfont=dict(color='white')
                 ),
-                zaxis_title='VaR (M USD)',
-                camera=dict(eye=dict(x=1.5, y=1.5, z=1.5))
+                zaxis_title='VaR (M USD)'
             ),
-            height=600
+            height=600,
+            paper_bgcolor='rgba(0,0,0,0)',
+            plot_bgcolor='rgba(0,0,0,0)',
+            font=dict(color='white')
         )
-        
+
         logger.debug("Surface 3D créée")
         return fig
-        
+
     except Exception as e:
         logger.error(f"Erreur surface 3D: {e}")
         fig = go.Figure()
@@ -292,15 +304,15 @@ def create_3d_risk_surface() -> go.Figure:
 
 
 def create_3d_portfolio_composition() -> go.Figure:
-    """
-    Composition 3D Enhanced avec tous produits - RESTAURÉ DU CODE ORIGINAL
-    """
+    \
+\
+\
     import streamlit as st
-    
+
     try:
         df_pnl = st.session_state.get('df_pnl_enhanced', pd.DataFrame())
         df = convert_generic_to_analytics_format(df_pnl)
-        
+
         if df.empty:
             fig = go.Figure()
             fig.add_annotation(
@@ -309,8 +321,8 @@ def create_3d_portfolio_composition() -> go.Figure:
                 showarrow=False, font_size=16
             )
             return fig
-        
-        # Composition par paire, type et tenor
+
+
         comp = (df.groupby(['paire', 'type', 'tenor'])['notional'].sum().reset_index())
         if comp.empty:
             fig = go.Figure()
@@ -320,25 +332,25 @@ def create_3d_portfolio_composition() -> go.Figure:
                 showarrow=False, font_size=16
             )
             return fig
-        
+
         comp['notional_m'] = comp['notional'] / 1_000_000
         size_series = np.clip(comp['notional_m'] / 10.0, 3, 30)
-        
+
         fig = go.Figure()
-        
-        # Couleurs par type d'instrument
+
+
         colors = {
             'FX_SWAP': '#ff6b6b',
-            'IRS': '#4ecdc4', 
+            'IRS': '#4ecdc4',
             'DEPOSIT': '#45b7d1',
             'LOAN': '#ffeaa7'
         }
-        
+
         for instrument_type in comp['type'].unique():
             data = comp[comp['type'] == instrument_type]
             if data.empty:
                 continue
-            
+
             fig.add_trace(go.Scatter3d(
                 x=data['paire'],
                 y=data['tenor'],
@@ -355,26 +367,28 @@ def create_3d_portfolio_composition() -> go.Figure:
                     '<b>%{x}</b><br>'
                     'Tenor: %{y}<br>'
                     'Notionnel: %{z:.1f}M USD<br>'
-                    'Type: ' + instrument_type + 
+                    'Type: ' + instrument_type +
                     '<extra></extra>'
                 )
             ))
-        
+
         fig.update_layout(
             title='Composition 3D Enhanced (Tous Produits)',
             scene=dict(
                 xaxis_title='Paire',
                 yaxis_title='Tenor',
-                zaxis_title='Notionnel (M USD)',
-                camera=dict(eye=dict(x=1.2, y=1.2, z=1.2))
+                zaxis_title='Notionnel (M USD)'
             ),
             height=600,
-            showlegend=True
+            showlegend=True,
+            paper_bgcolor='rgba(0,0,0,0)',
+            plot_bgcolor='rgba(0,0,0,0)',
+            font=dict(color='white')
         )
-        
+
         logger.debug("Composition 3D créée")
         return fig
-        
+
     except Exception as e:
         logger.error(f"Erreur composition 3D: {e}")
         fig = go.Figure()
@@ -387,16 +401,16 @@ def create_3d_portfolio_composition() -> go.Figure:
 
 
 def create_time_decay_analysis() -> go.Figure:
-    """
-    Analyse échéances Enhanced - RESTAURÉ DU CODE ORIGINAL
-    """
+    \
+\
+\
     import streamlit as st
     from .utils.dates import VAL_DATE, to_naive_series
-    
+
     try:
         df_pnl = st.session_state.get('df_pnl_enhanced', pd.DataFrame())
         df = convert_generic_to_analytics_format(df_pnl)
-        
+
         if df.empty:
             fig = go.Figure()
             fig.add_annotation(
@@ -405,26 +419,26 @@ def create_time_decay_analysis() -> go.Figure:
                 showarrow=False, font_size=16
             )
             return fig
-        
-        # Calcul jours jusqu'à échéance
+
+
         df['date_echeance'] = to_naive_series(df['date_echeance'])
         days_to = (df['date_echeance'] - VAL_DATE).dt.days
         df['days_to_maturity'] = days_to.clip(lower=0)
-        
-        # Buckets d'échéances
+
+
         bins = [0, 7, 14, 30, 60, 90, 180, 365, 999999]
         labels = ['0-7j', '8-14j', '15-30j', '31-60j', '61-90j', '91-180j', '180j-1Y', '1Y+']
         df['maturity_bucket'] = pd.cut(df['days_to_maturity'], bins=bins, labels=labels, right=False)
-        
-        # Agrégation par bucket, paire et instrument
+
+
         td = (df.groupby(['maturity_bucket', 'paire', 'instrument'])['notional'].sum().reset_index())
         td['notional_m'] = td['notional'] / 1_000_000
-        
-        # Graphique en barres avec pattern par instrument
+
+
         fig = px.bar(
-            td, 
-            x='maturity_bucket', 
-            y='notional_m', 
+            td,
+            x='maturity_bucket',
+            y='notional_m',
             color='paire',
             pattern_shape='instrument',
             title='⏰ Profil de Maturité Enhanced (Tous Produits)',
@@ -435,15 +449,18 @@ def create_time_decay_analysis() -> go.Figure:
             },
             height=500
         )
-        
+
         fig.update_layout(
             xaxis_title="Jours jusqu'à Échéance",
-            yaxis_title="Notionnel (M USD)"
+            yaxis_title="Notionnel (M USD)",
+            paper_bgcolor='rgba(0,0,0,0)',
+            plot_bgcolor='rgba(0,0,0,0)',
+            font=dict(color='white')
         )
-        
+
         logger.debug("Analyse time decay créée")
         return fig
-        
+
     except Exception as e:
         logger.error(f"Erreur time decay: {e}")
         fig = go.Figure()
@@ -456,20 +473,20 @@ def create_time_decay_analysis() -> go.Figure:
 
 
 def create_liquidity_heatmap() -> go.Figure:
-    """
-    Heatmap de liquidité par paire et tenor
-    
-    Returns:
-        go.Figure: Heatmap
-    """
+    \
+\
+\
+\
+\
+\
     import streamlit as st
-    
+
     try:
         df_pnl = st.session_state.get('df_pnl_enhanced', pd.DataFrame())
         df = convert_generic_to_analytics_format(df_pnl)
-        
+
         fig = go.Figure()
-        
+
         if df.empty:
             fig.add_annotation(
                 text="Aucune position pour heatmap",
@@ -477,10 +494,10 @@ def create_liquidity_heatmap() -> go.Figure:
                 showarrow=False, font_size=16
             )
             return fig
-        
+
         pairs = df['paire'].unique().tolist()
         tenors = sorted(df['tenor'].dropna().unique().tolist())
-        
+
         if not tenors:
             fig.add_annotation(
                 text="Pas de tenors valides",
@@ -488,18 +505,18 @@ def create_liquidity_heatmap() -> go.Figure:
                 showarrow=False, font_size=16
             )
             return fig
-        
-        # Construction de la matrice de liquidité
+
+
         liquidity_matrix = []
         hover_matrix = []
-        
+
         for pair in pairs:
             row = []
             hover_row = []
-            
+
             for tenor in tenors:
                 selection = df[(df['paire'] == pair) & (df['tenor'] == tenor)]
-                
+
                 if selection.empty:
                     row.append(0)
                     hover_row.append(f"{pair}/{tenor}: Aucune position")
@@ -507,10 +524,10 @@ def create_liquidity_heatmap() -> go.Figure:
                     total_m = selection['notional'].sum() / 1_000_000
                     deal_count = len(selection)
                     instruments = ", ".join(selection['instrument'].unique())
-                    
-                    # Score de liquidité basé sur volume et nombre de deals
+
+
                     liquidity_score = min(100, (total_m / 10) + (deal_count * 5))
-                    
+
                     row.append(liquidity_score)
                     hover_row.append(
                         f"{pair}/{tenor}<br>"
@@ -519,11 +536,11 @@ def create_liquidity_heatmap() -> go.Figure:
                         f"Instruments: {instruments}<br>"
                         f"Score Liquidité: {liquidity_score:.1f}"
                     )
-            
+
             liquidity_matrix.append(row)
             hover_matrix.append(hover_row)
-        
-        # Heatmap
+
+
         fig.add_trace(go.Heatmap(
             z=liquidity_matrix,
             x=tenors,
@@ -533,17 +550,20 @@ def create_liquidity_heatmap() -> go.Figure:
             hovertemplate='%{text}<extra></extra>',
             colorbar=dict(title="Score Liquidité")
         ))
-        
+
         fig.update_layout(
             title='💧 Heatmap Liquidité par Paire × Tenor',
             xaxis_title='Tenor',
             yaxis_title='Paire',
-            height=430
+            height=430,
+            paper_bgcolor='rgba(0,0,0,0)',
+            plot_bgcolor='rgba(0,0,0,0)',
+            font=dict(color='white')
         )
-        
+
         logger.debug("Heatmap liquidité créée")
         return fig
-        
+
     except Exception as e:
         logger.error(f"Erreur heatmap liquidité: {e}")
         fig = go.Figure()
@@ -556,19 +576,19 @@ def create_liquidity_heatmap() -> go.Figure:
 
 
 def create_correlation_heatmap() -> go.Figure:
-    """
-    Heatmap de corrélation des composantes PnL
-    
-    Returns:
-        go.Figure: Heatmap de corrélation
-    """
+    \
+\
+\
+\
+\
+\
     import streamlit as st
-    
+
     try:
         df_pnl = st.session_state.get('df_pnl_enhanced', pd.DataFrame())
-        
+
         fig = go.Figure()
-        
+
         if df_pnl.empty:
             fig.add_annotation(
                 text="Aucune donnée PnL pour corrélation",
@@ -576,11 +596,11 @@ def create_correlation_heatmap() -> go.Figure:
                 showarrow=False, font_size=16
             )
             return fig
-        
-        # Colonnes PnL disponibles
-        pnl_cols = [col for col in ['accrued_pnl', 'mtm_pnl', 'rate_pnl', 'liquidity_pnl'] 
+
+
+        pnl_cols = [col for col in ['accrued_pnl', 'mtm_pnl', 'rate_pnl', 'liquidity_pnl']
                    if col in df_pnl.columns]
-        
+
         if len(pnl_cols) < 2:
             fig.add_annotation(
                 text="Pas assez de types PnL pour corrélation",
@@ -588,14 +608,14 @@ def create_correlation_heatmap() -> go.Figure:
                 showarrow=False, font_size=16
             )
             return fig
-        
-        # Calcul matrice de corrélation
+
+
         corr_matrix = df_pnl[pnl_cols].corr()
-        
-        # Labels plus lisibles
+
+
         labels = [col.replace('_pnl', '').title() for col in corr_matrix.columns]
-        
-        # Heatmap de corrélation
+
+
         fig.add_trace(go.Heatmap(
             z=corr_matrix.values,
             x=labels,
@@ -608,17 +628,20 @@ def create_correlation_heatmap() -> go.Figure:
             hovertemplate='%{x} vs %{y}<br>Corrélation: %{z:.3f}<extra></extra>',
             colorbar=dict(title="Corrélation")
         ))
-        
+
         fig.update_layout(
             title='🔗 Matrice de Corrélation des PnL',
             height=400,
             xaxis_title='Type PnL',
-            yaxis_title='Type PnL'
+            yaxis_title='Type PnL',
+            paper_bgcolor='rgba(0,0,0,0)',
+            plot_bgcolor='rgba(0,0,0,0)',
+            font=dict(color='white')
         )
-        
+
         logger.debug("Heatmap corrélation créée")
         return fig
-        
+
     except Exception as e:
         logger.error(f"Erreur heatmap corrélation: {e}")
         fig = go.Figure()
@@ -631,16 +654,16 @@ def create_correlation_heatmap() -> go.Figure:
 
 
 def create_portfolio_composition_pie(df_pnl: pd.DataFrame, dimension: str = 'product') -> go.Figure:
-    """
-    Graphique en secteurs de la composition du portefeuille
-    
-    Args:
-        df_pnl: DataFrame PnL
-        dimension: Dimension d'analyse ('product', 'base_currency', etc.)
-        
-    Returns:
-        go.Figure: Graphique en secteurs
-    """
+    \
+\
+\
+\
+\
+\
+\
+\
+\
+\
     try:
         if df_pnl.empty or dimension not in df_pnl.columns:
             fig = go.Figure()
@@ -650,18 +673,18 @@ def create_portfolio_composition_pie(df_pnl: pd.DataFrame, dimension: str = 'pro
                 showarrow=False, font_size=16
             )
             return fig
-        
-        # Agrégation par dimension
+
+
         composition = df_pnl.groupby(dimension).agg({
             'amount': 'sum',
             'deal_id': 'count',
             'total_pnl': 'sum'
         }).reset_index()
-        
+
         composition['amount_m'] = composition['amount'] / 1_000_000
         composition['pnl_m'] = composition['total_pnl'] / 1_000_000
-        
-        # Graphique en secteurs
+
+
         fig = go.Figure(data=[go.Pie(
             labels=composition[dimension],
             values=composition['amount_m'],
@@ -676,15 +699,18 @@ def create_portfolio_composition_pie(df_pnl: pd.DataFrame, dimension: str = 'pro
             ),
             customdata=list(zip(composition['deal_id'], composition['pnl_m']))
         )])
-        
+
         fig.update_layout(
             title=f'🥧 Composition Portefeuille par {dimension.title()}',
-            height=400
+            height=400,
+            paper_bgcolor='rgba(0,0,0,0)',
+            plot_bgcolor='rgba(0,0,0,0)',
+            font=dict(color='white')
         )
-        
+
         logger.debug(f"Graphique composition {dimension} créé")
         return fig
-        
+
     except Exception as e:
         logger.error(f"Erreur graphique composition: {e}")
         fig = go.Figure()
@@ -697,15 +723,15 @@ def create_portfolio_composition_pie(df_pnl: pd.DataFrame, dimension: str = 'pro
 
 
 def create_maturity_profile_chart(df_pnl: pd.DataFrame) -> go.Figure:
-    """
-    Profil d'échéances du portefeuille
-    
-    Args:
-        df_pnl: DataFrame PnL
-        
-    Returns:
-        go.Figure: Graphique profil échéances
-    """
+    \
+\
+\
+\
+\
+\
+\
+\
+\
     try:
         if df_pnl.empty or 'maturity_date' not in df_pnl.columns:
             fig = go.Figure()
@@ -715,33 +741,33 @@ def create_maturity_profile_chart(df_pnl: pd.DataFrame) -> go.Figure:
                 showarrow=False, font_size=16
             )
             return fig
-        
+
         from .utils.dates import VAL_DATE
-        
-        # Calcul jours jusqu'à échéance
+
+
         df_temp = df_pnl.copy()
         df_temp['days_to_maturity'] = (pd.to_datetime(df_temp['maturity_date']) - VAL_DATE).dt.days
-        
-        # Buckets d'échéances
+
+
         bins = [0, 7, 14, 30, 60, 90, 180, 365, 999999]
         labels = ['0-7j', '8-14j', '15-30j', '31-60j', '61-90j', '91-180j', '180j-1Y', '1Y+']
-        
+
         df_temp['maturity_bucket'] = pd.cut(
-            df_temp['days_to_maturity'], 
-            bins=bins, 
-            labels=labels, 
+            df_temp['days_to_maturity'],
+            bins=bins,
+            labels=labels,
             right=False
         )
-        
-        # Agrégation par bucket
+
+
         maturity_profile = df_temp.groupby(['maturity_bucket', 'product']).agg({
             'amount': 'sum',
             'deal_id': 'count'
         }).reset_index()
-        
+
         maturity_profile['amount_m'] = maturity_profile['amount'] / 1_000_000
-        
-        # Graphique en barres groupées
+
+
         fig = px.bar(
             maturity_profile,
             x='maturity_bucket',
@@ -755,16 +781,19 @@ def create_maturity_profile_chart(df_pnl: pd.DataFrame) -> go.Figure:
             },
             height=500
         )
-        
+
         fig.update_layout(
             xaxis_title="Jours jusqu'à échéance",
             yaxis_title="Notionnel (M USD)",
-            barmode='stack'
+            barmode='stack',
+            paper_bgcolor='rgba(0,0,0,0)',
+            plot_bgcolor='rgba(0,0,0,0)',
+            font=dict(color='white')
         )
-        
+
         logger.debug("Graphique profil maturité créé")
         return fig
-        
+
     except Exception as e:
         logger.error(f"Erreur profil maturité: {e}")
         fig = go.Figure()
@@ -777,16 +806,16 @@ def create_maturity_profile_chart(df_pnl: pd.DataFrame) -> go.Figure:
 
 
 def create_pnl_trend_chart(df_pnl: pd.DataFrame, groupby_column: str = 'trade_date') -> go.Figure:
-    """
-    Tendance PnL dans le temps
-    
-    Args:
-        df_pnl: DataFrame PnL
-        groupby_column: Colonne de date pour groupement
-        
-    Returns:
-        go.Figure: Graphique de tendance
-    """
+    \
+\
+\
+\
+\
+\
+\
+\
+\
+\
     try:
         if df_pnl.empty or groupby_column not in df_pnl.columns:
             fig = go.Figure()
@@ -796,20 +825,20 @@ def create_pnl_trend_chart(df_pnl: pd.DataFrame, groupby_column: str = 'trade_da
                 showarrow=False, font_size=16
             )
             return fig
-        
-        # Agrégation par date
+
+
         df_temp = df_pnl.copy()
         df_temp[groupby_column] = pd.to_datetime(df_temp[groupby_column])
-        
+
         trend_data = df_temp.groupby([df_temp[groupby_column].dt.date, 'product']).agg({
             'total_pnl': 'sum',
             'amount': 'sum'
         }).reset_index()
-        
+
         trend_data['total_pnl_m'] = trend_data['total_pnl'] / 1_000_000
         trend_data['amount_m'] = trend_data['amount'] / 1_000_000
-        
-        # Graphique linéaire
+
+
         fig = px.line(
             trend_data,
             x=groupby_column,
@@ -822,14 +851,14 @@ def create_pnl_trend_chart(df_pnl: pd.DataFrame, groupby_column: str = 'trade_da
                 'product': 'Produit'
             }
         )
-        
+
         fig.add_hline(y=0, line_dash="dash", line_color="gray", opacity=0.5)
-        
-        fig.update_layout(height=400)
-        
+
+        fig.update_layout(height=400, paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', font=dict(color='white'))
+
         logger.debug("Graphique tendance PnL créé")
         return fig
-        
+
     except Exception as e:
         logger.error(f"Erreur tendance PnL: {e}")
         fig = go.Figure()
@@ -842,15 +871,15 @@ def create_pnl_trend_chart(df_pnl: pd.DataFrame, groupby_column: str = 'trade_da
 
 
 def create_trader_performance_chart(df_pnl: pd.DataFrame) -> go.Figure:
-    """
-    Performance par trader
-    
-    Args:
-        df_pnl: DataFrame PnL
-        
-    Returns:
-        go.Figure: Graphique performance traders
-    """
+    \
+\
+\
+\
+\
+\
+\
+\
+\
     try:
         if df_pnl.empty or 'trader_id' not in df_pnl.columns:
             fig = go.Figure()
@@ -860,17 +889,17 @@ def create_trader_performance_chart(df_pnl: pd.DataFrame) -> go.Figure:
                 showarrow=False, font_size=16
             )
             return fig
-        
-        # Performance par trader
+
+
         trader_perf = df_pnl.groupby('trader_id').agg({
             'total_pnl': 'sum',
             'amount': 'sum',
             'deal_id': 'count'
         }).reset_index()
-        
-        # Filtrer les traders avec au moins 2 deals
+
+
         trader_perf = trader_perf[trader_perf['deal_id'] >= 2]
-        
+
         if trader_perf.empty:
             fig = go.Figure()
             fig.add_annotation(
@@ -879,14 +908,14 @@ def create_trader_performance_chart(df_pnl: pd.DataFrame) -> go.Figure:
                 showarrow=False, font_size=16
             )
             return fig
-        
+
         trader_perf['pnl_m'] = trader_perf['total_pnl'] / 1_000_000
         trader_perf['amount_m'] = trader_perf['amount'] / 1_000_000
         trader_perf['pnl_bps'] = (trader_perf['total_pnl'] / trader_perf['amount'] * 10_000).fillna(0)
-        
-        # Scatter plot
+
+
         fig = go.Figure()
-        
+
         fig.add_trace(go.Scatter(
             x=trader_perf['amount_m'],
             y=trader_perf['pnl_m'],
@@ -894,7 +923,7 @@ def create_trader_performance_chart(df_pnl: pd.DataFrame) -> go.Figure:
             text=trader_perf['trader_id'],
             textposition='top center',
             marker=dict(
-                size=trader_perf['deal_id'] * 3,  # Taille selon nb deals
+                size=trader_perf['deal_id'] * 3,
                 color=trader_perf['pnl_bps'],
                 colorscale='RdYlGn',
                 colorbar=dict(title="PnL (bps)"),
@@ -910,19 +939,22 @@ def create_trader_performance_chart(df_pnl: pd.DataFrame) -> go.Figure:
             ),
             customdata=list(zip(trader_perf['deal_id'], trader_perf['pnl_bps']))
         ))
-        
+
         fig.add_hline(y=0, line_dash="dash", line_color="gray", opacity=0.5)
-        
+
         fig.update_layout(
             title='👥 Performance par Trader',
             xaxis_title='Volume Trading (M USD)',
             yaxis_title='PnL Total (M USD)',
-            height=500
+            height=500,
+            paper_bgcolor='rgba(0,0,0,0)',
+            plot_bgcolor='rgba(0,0,0,0)',
+            font=dict(color='white')
         )
-        
+
         logger.debug("Graphique performance trader créé")
         return fig
-        
+
     except Exception as e:
         logger.error(f"Erreur performance trader: {e}")
         fig = go.Figure()
@@ -935,15 +967,15 @@ def create_trader_performance_chart(df_pnl: pd.DataFrame) -> go.Figure:
 
 
 def create_risk_return_scatter(df_pnl: pd.DataFrame) -> go.Figure:
-    """
-    Scatter plot risque-rendement par deal
-    
-    Args:
-        df_pnl: DataFrame PnL
-        
-    Returns:
-        go.Figure: Scatter risque-rendement
-    """
+    \
+\
+\
+\
+\
+\
+\
+\
+\
     try:
         if df_pnl.empty:
             fig = go.Figure()
@@ -953,23 +985,23 @@ def create_risk_return_scatter(df_pnl: pd.DataFrame) -> go.Figure:
                 showarrow=False, font_size=16
             )
             return fig
-        
-        # Approximation du risque par la maturité et montant
+
+
         df_temp = df_pnl.copy()
-        
+
         if 'time_to_maturity_years' in df_temp.columns:
-            # Risque approximatif = volatilité × sqrt(temps) × montant
+
             df_temp['risk_estimate'] = (
-                df_temp['amount'] * 
-                df_temp['time_to_maturity_years'].fillna(0) * 
-                0.15  # Vol approximative 15%
+                df_temp['amount'] *
+                df_temp['time_to_maturity_years'].fillna(0) *
+                0.15
             ) / 1_000_000
         else:
             df_temp['risk_estimate'] = df_temp['amount'] * 0.10 / 1_000_000
-        
+
         df_temp['return_estimate'] = df_temp['total_pnl'] / 1_000_000
-        
-        # Scatter plot
+
+
         fig = px.scatter(
             df_temp,
             x='risk_estimate',
@@ -984,15 +1016,15 @@ def create_risk_return_scatter(df_pnl: pd.DataFrame) -> go.Figure:
                 'product': 'Produit'
             }
         )
-        
-        # Ligne de rendement nul
+
+
         fig.add_hline(y=0, line_dash="dash", line_color="gray", opacity=0.5)
-        
-        # Frontière efficiente approximative (demo)
+
+
         if len(df_temp) > 5:
             x_range = np.linspace(df_temp['risk_estimate'].min(), df_temp['risk_estimate'].max(), 50)
-            efficient_frontier = x_range * 0.3  # Ratio rendement/risque arbitraire
-            
+            efficient_frontier = x_range * 0.3
+
             fig.add_trace(go.Scatter(
                 x=x_range,
                 y=efficient_frontier,
@@ -1001,12 +1033,12 @@ def create_risk_return_scatter(df_pnl: pd.DataFrame) -> go.Figure:
                 line=dict(dash='dot', color='orange'),
                 hoverinfo='skip'
             ))
-        
-        fig.update_layout(height=500)
-        
+
+        fig.update_layout(height=500, paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', font=dict(color='white'))
+
         logger.debug("Scatter risque-rendement créé")
         return fig
-        
+
     except Exception as e:
         logger.error(f"Erreur scatter risque-rendement: {e}")
         fig = go.Figure()
@@ -1019,14 +1051,14 @@ def create_risk_return_scatter(df_pnl: pd.DataFrame) -> go.Figure:
 
 
 def create_scenario_analysis() -> go.Figure:
-    """
-    Analyse de scénarios économiques - RESTAURÉE DU CODE ORIGINAL
-    """
+    \
+\
+\
     import streamlit as st
-    
+
     try:
         df_pnl = st.session_state.get('df_pnl_enhanced', pd.DataFrame())
-        
+
         if df_pnl.empty:
             fig = go.Figure()
             fig.add_annotation(
@@ -1035,8 +1067,8 @@ def create_scenario_analysis() -> go.Figure:
                 showarrow=False, font_size=16
             )
             return fig
-        
-        # Scénarios économiques avec paramètres
+
+
         scenarios = {
             'Récession': {'rate_shift': -0.02, 'fx_vol': 1.5, 'credit_spread': 0.01},
             'Inflation': {'rate_shift': 0.025, 'fx_vol': 1.2, 'credit_spread': 0.005},
@@ -1044,26 +1076,26 @@ def create_scenario_analysis() -> go.Figure:
             'Reprise': {'rate_shift': 0.015, 'fx_vol': 0.8, 'credit_spread': -0.002},
             'Crise Bancaire': {'rate_shift': -0.015, 'fx_vol': 2.0, 'credit_spread': 0.02}
         }
-        
+
         results = []
         for scenario_name, params in scenarios.items():
             total_impact = 0
-            
-            # Impact MTM si disponible
+
+
             if 'mtm_pnl' in df_pnl.columns and 'amount' in df_pnl.columns:
                 mtm_impact = df_pnl['amount'].sum() * params['rate_shift'] * 0.3
                 total_impact += mtm_impact
-            
-            # Impact rate si disponible
+
+
             if 'rate_pnl' in df_pnl.columns and 'amount' in df_pnl.columns:
                 rate_impact = df_pnl['amount'].sum() * params['rate_shift'] * 0.2
                 total_impact += rate_impact
-            
-            # Impact liquidité si disponible
+
+
             if 'liquidity_pnl' in df_pnl.columns and 'amount' in df_pnl.columns:
                 liq_impact = df_pnl['amount'].sum() * params['credit_spread'] * 0.1
                 total_impact += liq_impact
-            
+
             results.append({
                 'Scénario': scenario_name,
                 'Impact': total_impact / 1_000_000,
@@ -1071,10 +1103,10 @@ def create_scenario_analysis() -> go.Figure:
                 'FX Vol': f"{params['fx_vol']:.1f}x",
                 'Credit Spread': f"{params['credit_spread']*10000:+.0f}bp"
             })
-        
+
         df_results = pd.DataFrame(results)
-        
-        # Graphique en barres avec couleurs selon l'impact
+
+
         fig = go.Figure(data=[go.Bar(
             x=df_results['Scénario'],
             y=df_results['Impact'],
@@ -1083,17 +1115,20 @@ def create_scenario_analysis() -> go.Figure:
             textposition='auto',
             hovertemplate='<b>%{x}</b><br>Impact: %{y:+.1f}M USD<extra></extra>'
         )])
-        
+
         fig.update_layout(
             title='🌍 Analyse de Scénarios Macroéconomiques',
             yaxis_title='Impact P&L (M USD)',
             height=400,
-            showlegend=False
+            showlegend=False,
+            paper_bgcolor='rgba(0,0,0,0)',
+            plot_bgcolor='rgba(0,0,0,0)',
+            font=dict(color='white')
         )
-        
+
         logger.debug("Analyse scénarios créée")
         return fig
-        
+
     except Exception as e:
         logger.error(f"Erreur analyse scénarios: {e}")
         fig = go.Figure()
@@ -1106,16 +1141,16 @@ def create_scenario_analysis() -> go.Figure:
 
 
 def create_var_breakdown() -> go.Figure:
-    """
-    Décomposition VaR par composante - RESTAURÉE
-    """
+    \
+\
+\
     import streamlit as st
     from .risk import run_monte_carlo_simulation
     from .analytics import convert_generic_to_analytics_format
-    
+
     try:
         df_pnl = st.session_state.get('df_pnl_enhanced', pd.DataFrame())
-        
+
         if df_pnl.empty:
             fig = go.Figure()
             fig.add_annotation(
@@ -1124,11 +1159,11 @@ def create_var_breakdown() -> go.Figure:
                 showarrow=False, font_size=16
             )
             return fig
-        
-        # Simulation Monte Carlo pour décomposition
+
+
         df_analytics = convert_generic_to_analytics_format(df_pnl)
         sim_results = run_monte_carlo_simulation(df_analytics, n_simulations=10000, seed=123)
-        
+
         if not sim_results:
             fig = go.Figure()
             fig.add_annotation(
@@ -1137,24 +1172,24 @@ def create_var_breakdown() -> go.Figure:
                 showarrow=False, font_size=16
             )
             return fig
-        
-        # Extraction des composantes
+
+
         components = {}
-        
+
         if 'fx_component' in sim_results:
             fx_pnl = np.array(sim_results['fx_component'])
             components['FX VaR 95%'] = np.percentile(fx_pnl, 5) / 1_000_000
             components['FX VaR 99%'] = np.percentile(fx_pnl, 1) / 1_000_000
-        
+
         if 'rate_component' in sim_results:
             rate_pnl = np.array(sim_results['rate_component'])
             components['Rate VaR 95%'] = np.percentile(rate_pnl, 5) / 1_000_000
             components['Rate VaR 99%'] = np.percentile(rate_pnl, 1) / 1_000_000
-        
-        # VaR total
+
+
         components['Total VaR 95%'] = sim_results.get('var_95', 0) / 1_000_000
         components['Total VaR 99%'] = sim_results.get('var_99', 0) / 1_000_000
-        
+
         if not components:
             fig = go.Figure()
             fig.add_annotation(
@@ -1163,13 +1198,13 @@ def create_var_breakdown() -> go.Figure:
                 showarrow=False, font_size=16
             )
             return fig
-        
+
         categories = list(components.keys())
         values = list(components.values())
-        
-        # Couleurs par type
+
+
         colors = ['#4ecdc4', '#45b7d1', '#96ceb4', '#ffeaa7', '#ff6b6b', '#e17055']
-        
+
         fig = go.Figure(data=[go.Bar(
             x=categories,
             y=values,
@@ -1178,17 +1213,20 @@ def create_var_breakdown() -> go.Figure:
             textposition='auto',
             hovertemplate='<b>%{x}</b><br>VaR: %{y:+.1f}M USD<extra></extra>'
         )])
-        
+
         fig.update_layout(
             title='Décomposition VaR par Composante',
             yaxis_title='VaR (M USD)',
             height=400,
-            showlegend=False
+            showlegend=False,
+            paper_bgcolor='rgba(0,0,0,0)',
+            plot_bgcolor='rgba(0,0,0,0)',
+            font=dict(color='white')
         )
-        
+
         logger.debug("VaR breakdown créé")
         return fig
-        
+
     except Exception as e:
         logger.error(f"Erreur VaR breakdown: {e}")
         fig = go.Figure()
